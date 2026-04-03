@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @import "flowbite/src/themes/default";
 @import '@fortawesome/fontawesome-free/css/all.min.css';
+@import "jquery-confirm/css/jquery-confirm.css";
+@import './loading.css';
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
 @source "../views";
@@ -10,7 +12,99 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-@theme {
+/* @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+} */
+
+@media print {
+    body {
+        visibility: hidden;
+    }
+    #print-report {
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    #print-report .print-button {
+        display: none;
+    }
+    #print-report table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    #print-report table, #print-report th, #print-report td {
+        padding: 2px 5px;
+        font-size: 11px;
+    }
+}
+
+body {
+    font-family: "Red Hat Text", sans-serif;
+    letter-spacing: 0.5px;
+    zoom: 0.9;    
+}
+.wrapper-table {
+    overflow-x: auto !important;
+}
+.dt-layout-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.dt-layout-row.dt-layout-table {
+    display: block;
+}
+.dt-layout-cell select {
+    background: #fff;
+    border-radius: 5px;
+    margin-right: 5px;
+    outline: none;
+    padding: 5px 10px;
+    width: 100px;
+    border: 1px solid #cdcdcd;
+}
+.dt-layout-cell select:focus {
+    border-color: blue;
+}
+.dt-search label {
+    margin-right: 5px;
+}
+.dt-search input {
+    background: #fff;
+    border-radius: 5px;
+    outline: none;
+    padding: 5px 10px;
+    width: 200px;
+    border: 1px solid #cdcdcd;
+}
+.dt-paging button {
+    background: #fff;
+    outline: none;
+    border-right: 1px solid #cdcdcd ;
+    border-left: none;
+    padding: 5px 10px;
+    border-top: 1px solid #cdcdcd ;
+    border-bottom: 1px solid #cdcdcd ;
+}
+.dt-paging button:hover {
+    background: #f0f0f0;
+}
+.dt-paging button:disabled {
+    background: #e0e0e0;
+    cursor: not-allowed;
+}
+.dt-paging button.first {
+    border-radius: 5px 0 0 5px;
+    border-left: 1px solid #cdcdcd ;
+}
+.dt-paging button.last {
+    border-radius: 0 5px 5px 0;
+}
+
+.jconfirm-box {
+    width: 300px !important;
 }
