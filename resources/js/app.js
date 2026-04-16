@@ -1,5 +1,10 @@
 import './bootstrap';
 import $ from 'jquery';
+import.meta.glob([
+  '../img/**',
+  '../fonts/**',
+]);
+
 window.jQuery = window.$ = $;
 
 import 'flowbite';
