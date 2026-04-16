@@ -244,7 +244,7 @@
                                     Rp. ${element.price.toLocaleString('id-ID')},-
                                 </td>
                                 <td class="px-6 py-4">
-                                    Rp. ${element.cost_price.toLocaleString('id-ID')},-
+                                    Rp. ${element.cost_price ?? element.cost_price.toLocaleString('id-ID')},-
                                 </td>
                                 <td class="px-6 py-4">
                                     Rp. ${element.cost_price_total.toLocaleString('id-ID')},-

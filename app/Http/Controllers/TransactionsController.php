@@ -13,6 +13,7 @@ use Mike42\Escpos\EscposImage;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\GdEscposImage;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 
 class TransactionsController extends Controller
@@ -302,42 +303,42 @@ class TransactionsController extends Controller
      * Print Check Receipt No Price
      */
     public function printCheckReceiptNoPrice(String $uuid) {
-        $transaction = Transactions::with('orderItem')->findOrFail($uuid);
-        // return response()->json(['success' => true, 'transaction' => $transaction]);
-        $connector = new WindowsPrintConnector("POS-58");
-        $printer = new Printer($connector);
+        $transaction = Transactions::with('orderItem','table')->findOrFail($uuid);
+        return response()->json(['success' => true, 'transaction' => $transaction]);
+        // $connector = new WindowsPrintConnector("POS-58");
+        // $printer = new Printer($connector);
 
         
-        $printer->setJustification(Printer::JUSTIFY_CENTER);
-        $printer->setTextSize(2,2);
-        $printer->text("CHECK \n");
-        $printer->text($transaction->table && $transaction->table->name ? $transaction->table->name . "\n" : '' . "\n");
-        $printer->setTextSize(1,1);
-        $printer->setJustification(Printer::JUSTIFY_LEFT);
-        $printer->text("\n");
-        $printer->text("Date: " . date('Y-m-d H:i:s') . "\n");
-        $printer->text("--------------------------------\n");
+        // $printer->setJustification(Printer::JUSTIFY_CENTER);
+        // $printer->setTextSize(2,2);
+        // $printer->text("CHECK \n");
+        // $printer->text($transaction->table && $transaction->table->name ? $transaction->table->name . "\n" : '' . "\n");
+        // $printer->setTextSize(1,1);
+        // $printer->setJustification(Printer::JUSTIFY_LEFT);
+        // $printer->text("\n");
+        // $printer->text("Date: " . date('Y-m-d H:i:s') . "\n");
+        // $printer->text("--------------------------------\n");
         
-        $printer->text("Invoice Number: " . $transaction->invoice_number . "\n");
-        $printer->text("Customer Name: " . ($transaction->customer_name ?? '-') . "\n");
-        $printer->text("Order Type: " . ($transaction->order_type ?? '-') . "\n");
-        $printer->text("--------------------------------\n");
-        foreach($transaction->orderItem as $item) {
-            $printer->text($item->product_name ."\n");
-            if($item->note) {
-                $printer->text("* Note: " . $item->note . "\n");
-            }
-            $priceLine = str_pad("Qty: ", 32 - strlen($item->qty), " ") . $item->qty;
-            $printer->text($priceLine . "\n");
+        // $printer->text("Invoice Number: " . $transaction->invoice_number . "\n");
+        // $printer->text("Customer Name: " . ($transaction->customer_name ?? '-') . "\n");
+        // $printer->text("Order Type: " . ($transaction->order_type ?? '-') . "\n");
+        // $printer->text("--------------------------------\n");
+        // foreach($transaction->orderItem as $item) {
+        //     $printer->text($item->product_name ."\n");
+        //     if($item->note) {
+        //         $printer->text("* Note: " . $item->note . "\n");
+        //     }
+        //     $priceLine = str_pad("Qty: ", 32 - strlen($item->qty), " ") . $item->qty;
+        //     $printer->text($priceLine . "\n");
             
-        }
+        // }
 
-        $printer->cut();
+        // $printer->cut();
 
-        /* Close printer */
-        $printer->close();
+        // /* Close printer */
+        // $printer->close();
 
-        return response()->json(['success' => true, 'message' => 'Check receipt printed successfully']);
+        // return response()->json(['success' => true, 'message' => 'Check receipt printed successfully']);
     }
 
     /**
