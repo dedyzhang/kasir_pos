@@ -730,6 +730,14 @@
         });
         //Print Check Order
         $('#modal-see-transaction').on('click','.print-transaction-button',function() {
+            $('#printreceiptcheck-iframe').html('');
+            $('#receipt-items').html('');
+            $('#receipt-meja').text('');
+            $('#receipt-invoice-number').text('');
+            $('#receipt-customer-name').text('');
+            $('#receipt-order-type').text('');
+            $('#receipt-date').text('');
+            
             loading();
             var transactionId = $('#uuid_transaction_detail').val();
             var url = "{{ route('transaction.print.check.noprice',':id') }}";
@@ -764,6 +772,7 @@
                         }
 
                         removeLoading();
+
                         var divContents = $("#printreceiptcheck").html();
                         // var printWindow = window.open('', '', 'height=400,width=384');
                         // printWindow.document.write('<html><head><title>DIV Contents</title>');
