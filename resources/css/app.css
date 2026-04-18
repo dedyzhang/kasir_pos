@@ -18,8 +18,12 @@
 } */
 
 @media print {
+    @page { margin: 0; padding: 0; size: 58mm; }
     body {
         visibility: hidden;
+        margin: 0;
+        padding: 0;
+        width: 58mm;
     }
     #print-report {
         visibility: visible;
@@ -37,6 +41,12 @@
     #print-report table, #print-report th, #print-report td {
         padding: 2px 5px;
         font-size: 11px;
+    }
+    #printreceiptcheck {
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        top: 0;
     }
     #printreceiptcheck .print-receipt:last-child {
         page-break-after: auto !important;
