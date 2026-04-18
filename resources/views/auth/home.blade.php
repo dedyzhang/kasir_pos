@@ -338,11 +338,11 @@
         <h1 style="text-align: center; margin:0;padding:0" class="print-receipt">CHECK</h1>
         <h1 style="text-align: center; margin:0;padding:0" class="print-receipt" id="receipt-meja"></h1>
         <p style="text-align: center; margin:0;padding:0" class="print-receipt">=======================</p>
-        <p style="margin:0;padding:0;font-size:10px" class="print-receipt">Date : <span id="receipt-date">{{ date('Y-m-d H:i:s') }}</span></p>
+        <p style="margin:0;padding:0;font-size:12px" class="print-receipt">Date : <span id="receipt-date">{{ date('Y-m-d H:i:s') }}</span></p>
         <p style="text-align: center; margin:0;padding:0" class="print-receipt">--------------------------------------</p>
-        <p style="margin:0;padding:0;font-size:10px" class="print-receipt">Invoice Number : <span id="receipt-invoice-number">INV0908993838</span></p>
-        <p style="margin:0;padding:0;font-size:10px" class="print-receipt">Customer Name : <span id="receipt-customer-name">John Doe</span></p>
-        <p style="margin:0;padding:0;font-size:10px" class="print-receipt">Order Type : <span id="receipt-order-type">Take Away</span></p>
+        <p style="margin:0;padding:0;font-size:12px" class="print-receipt">Invoice Number : <span id="receipt-invoice-number">INV0908993838</span></p>
+        <p style="margin:0;padding:0;font-size:12px" class="print-receipt">Customer Name : <span id="receipt-customer-name">John Doe</span></p>
+        <p style="margin:0;padding:0;font-size:12px" class="print-receipt">Order Type : <span id="receipt-order-type">Take Away</span></p>
         <p style="text-align: center; margin:0;padding:0" class="print-receipt">=======================</p>
         <div id="receipt-items">
 
@@ -350,6 +350,7 @@
         <p style="page-break-after: auto !important"></p>
 
     </div>
+    <iframe id="printreceiptcheck-iframe" name="printreceiptcheck" class="hidden"></iframe>
     <script type="module">
         const osInstance = OverlayScrollbars(document.querySelector('#categories-list'), {});
         const osInstanc = OverlayScrollbars(document.querySelector('#order-list'), {});
@@ -729,6 +730,14 @@
         });
         //Print Check Order
         $('#modal-see-transaction').on('click','.print-transaction-button',function() {
+            $('#printreceiptcheck-iframe').html('');
+            $('#receipt-items').html('');
+            $('#receipt-meja').text('');
+            $('#receipt-invoice-number').text('');
+            $('#receipt-customer-name').text('');
+            $('#receipt-order-type').text('');
+            $('#receipt-date').text('');
+            
             loading();
             var transactionId = $('#uuid_transaction_detail').val();
             var url = "{{ route('transaction.print.check.noprice',':id') }}";
@@ -751,8 +760,8 @@
                         if(transaction.order_item.length > 0) {
                             transaction.order_item.forEach(elem => {
                                 var item = `
-                                    <p style="margin:0;padding:0;font-size:10px" class="print-receipt">${elem.product_name || ''}</p>
-                                    <div style="margin:0; margin-top: -10px; padding: 0; font-size: 10px; display: flex; justify-content: space-between;" class="print-receipt">
+                                    <p style="margin:0;padding:0;font-size:12px" class="print-receipt">${elem.product_name || ''}</p>
+                                    <div style="margin:0; margin-top: -10px; padding: 0; font-size: 12px; display: flex; justify-content: space-between;" class="print-receipt">
                                         <p class="item-note" style="font-style: italic">Note: ${elem.note ? elem.note : '-'}</p>
                                         <p class="item-qty">${elem.qty}x</p>
                                     </div>
@@ -763,13 +772,18 @@
                         }
 
                         removeLoading();
+
                         var divContents = $("#printreceiptcheck").html();
-                        var printWindow = window.open('', '', 'height=400,width=384');
-                        printWindow.document.write('<html><head><title>DIV Contents</title>');
-                        printWindow.document.write('</head><body >');
-                        printWindow.document.write(divContents);
-                        printWindow.document.write('</body></html>');
-                        printWindow.print();
+                        // var printWindow = window.open('', '', 'height=400,width=384');
+                        // printWindow.document.write('<html><head><title>DIV Contents</title>');
+                        // printWindow.document.write('</head><body >');
+                        // printWindow.document.write(divContents);
+                        // printWindow.document.write('</body></html>');
+                        // printWindow.print();
+                        var w = window.open('','printreceiptcheck');
+                        w.document.write(divContents);
+                        w.print();
+                        w.close();
                     }
                 },
                 error: function(data) {
