@@ -24,6 +24,8 @@
         margin: 0;
         padding: 0;
         width: 58mm;
+        font-family: "courier new", monospace !important;
+        font-size: 14px;
     }
     #print-report {
         visibility: visible;

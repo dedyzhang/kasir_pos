@@ -333,24 +333,24 @@
             <img src="{{ Vite::asset('resources/img/start-order.png') }}" class="w-full h-auto" />
         </div>
     </div>
-    <div id="printreceiptcheck" class="hidden">
+    <div id="printreceiptcheck" class="hidden" style="font-family:Arial Sans-serif !important;">
         <!-- Content to be printed -->
         <h1 style="text-align: center; margin:0;padding:0" class="print-receipt">CHECK</h1>
         <h1 style="text-align: center; margin:0;padding:0" class="print-receipt" id="receipt-meja"></h1>
         <p style="text-align: center; margin:0;padding:0" class="print-receipt">=======================</p>
-        <p style="margin:0;padding:0;font-size:12px" class="print-receipt">Date : <span id="receipt-date">{{ date('Y-m-d H:i:s') }}</span></p>
+        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Date : <span id="receipt-date">{{ date('Y-m-d H:i:s') }}</span></p>
         <p style="text-align: center; margin:0;padding:0" class="print-receipt">--------------------------------------</p>
-        <p style="margin:0;padding:0;font-size:12px" class="print-receipt">Invoice Number : <span id="receipt-invoice-number">INV0908993838</span></p>
-        <p style="margin:0;padding:0;font-size:12px" class="print-receipt">Customer Name : <span id="receipt-customer-name">John Doe</span></p>
-        <p style="margin:0;padding:0;font-size:12px" class="print-receipt">Order Type : <span id="receipt-order-type">Take Away</span></p>
-        <p style="text-align: center; margin:0;padding:0" class="print-receipt">=======================</p>
+        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Invoice Number : <span id="receipt-invoice-number">INV0908993838</span></p>
+        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Customer Name : <span id="receipt-customer-name">John Doe</span></p>
+        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Order Type : <span id="receipt-order-type">Take Away</span></p>
+        <p style="text-align: center; margin:0;padding:0; margin-bottom:10px;" class="print-receipt">=======================</p>
         <div id="receipt-items">
 
         </div>
         <p style="page-break-after: auto !important"></p>
 
     </div>
-    <iframe id="printreceiptcheck-iframe" name="printreceiptcheck" class="hidden"></iframe>
+    <iframe id="printreceiptcheck-iframe" name="printreceiptcheck" class="hidden" style="font-family:Arial Sans-serif !important;"></iframe>
     <script type="module">
         const osInstance = OverlayScrollbars(document.querySelector('#categories-list'), {});
         const osInstanc = OverlayScrollbars(document.querySelector('#order-list'), {});
@@ -730,14 +730,14 @@
         });
         //Print Check Order
         $('#modal-see-transaction').on('click','.print-transaction-button',function() {
-            $('#printreceiptcheck-iframe').html('');
+            $('#printreceiptcheck-iframe').attr('src','about:blank');
             $('#receipt-items').html('');
             $('#receipt-meja').text('');
             $('#receipt-invoice-number').text('');
             $('#receipt-customer-name').text('');
             $('#receipt-order-type').text('');
             $('#receipt-date').text('');
-            
+
             loading();
             var transactionId = $('#uuid_transaction_detail').val();
             var url = "{{ route('transaction.print.check.noprice',':id') }}";
@@ -753,15 +753,15 @@
                         $('#receipt-invoice-number').text(transaction.invoice_number);
                         $('#receipt-customer-name').text(transaction.customer_name || 'Guest');
                         $('#receipt-order-type').text(transaction.order_type ? transaction.order_type.replace('_',' ').toUpperCase() : '');
-                        $('#receipt-date').text(transaction.created_at || '{{ date('Y-m-d H:i:s') }}');
+                        $('#receipt-date').text(moment(transaction.created_at).format('YYYY-MM-DD HH:mm:ss') || '{{ date('Y-m-d H:i:s') }}');
                         $('#receipt-items').empty();
                         var product = data.transaction.order_item;
                         var productList = "";
                         if(transaction.order_item.length > 0) {
                             transaction.order_item.forEach(elem => {
                                 var item = `
-                                    <p style="margin:0;padding:0;font-size:12px" class="print-receipt">${elem.product_name || ''}</p>
-                                    <div style="margin:0; margin-top: -10px; padding: 0; font-size: 12px; display: flex; justify-content: space-between;" class="print-receipt">
+                                    <p style="margin:0;padding:0;font-size:14px; margin-top:-10px;" class="print-receipt">${elem.product_name || ''}</p>
+                                    <div style="margin:0; margin-top: -10px; padding: 0; font-size: 14px; display: flex; justify-content: space-between;" class="print-receipt">
                                         <p class="item-note" style="font-style: italic">Note: ${elem.note ? elem.note : '-'}</p>
                                         <p class="item-qty">${elem.qty}x</p>
                                     </div>
