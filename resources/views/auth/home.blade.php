@@ -333,16 +333,16 @@
             <img src="{{ Vite::asset('resources/img/start-order.png') }}" class="w-full h-auto" />
         </div>
     </div>
-    <div id="printreceiptcheck" class="hidden" style="font-family:Arial Sans-serif !important;">
+    <div id="printreceiptcheck" class="hidden">
         <!-- Content to be printed -->
         <h1 style="text-align: center; margin:0;padding:0" class="print-receipt">CHECK</h1>
         <h1 style="text-align: center; margin:0;padding:0" class="print-receipt" id="receipt-meja"></h1>
         <p style="text-align: center; margin:0;padding:0" class="print-receipt">=======================</p>
         <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Date : <span id="receipt-date">{{ date('Y-m-d H:i:s') }}</span></p>
-        <p style="text-align: center; margin:0;padding:0" class="print-receipt">--------------------------------------</p>
-        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Invoice Number : <span id="receipt-invoice-number">INV0908993838</span></p>
-        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Customer Name : <span id="receipt-customer-name">John Doe</span></p>
-        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Order Type : <span id="receipt-order-type">Take Away</span></p>
+        <p style="text-align: center; margin:0;padding:0" class="print-receipt">=======================</p>
+        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">No Inv : <span id="receipt-invoice-number"></span></p>
+        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Name : <span id="receipt-customer-name"></span></p>
+        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Order Type : <span id="receipt-order-type"></span></p>
         <p style="text-align: center; margin:0;padding:0; margin-bottom:10px;" class="print-receipt">=======================</p>
         <div id="receipt-items">
 
@@ -350,7 +350,8 @@
         <p style="page-break-after: auto !important"></p>
 
     </div>
-    <iframe id="printreceiptcheck-iframe" name="printreceiptcheck" class="hidden" style="font-family:Arial Sans-serif !important;"></iframe>
+    <iframe id="printreceiptcheck-iframe" name="printreceiptcheck" class="hidden" style="font-family: Georgia, 'Times New Roman', Times, serif">
+    </iframe>
     <script type="module">
         const osInstance = OverlayScrollbars(document.querySelector('#categories-list'), {});
         const osInstanc = OverlayScrollbars(document.querySelector('#order-list'), {});
@@ -753,17 +754,17 @@
                         $('#receipt-invoice-number').text(transaction.invoice_number);
                         $('#receipt-customer-name').text(transaction.customer_name || 'Guest');
                         $('#receipt-order-type').text(transaction.order_type ? transaction.order_type.replace('_',' ').toUpperCase() : '');
-                        $('#receipt-date').text(moment(transaction.created_at).format('YYYY-MM-DD HH:mm:ss') || '{{ date('Y-m-d H:i:s') }}');
+                        $('#receipt-date').text(moment(transaction.created_at).format('DD-MM-YY HH:mm:ss') || '{{ date('Y-m-d H:i:s') }}');
                         $('#receipt-items').empty();
                         var product = data.transaction.order_item;
                         var productList = "";
                         if(transaction.order_item.length > 0) {
                             transaction.order_item.forEach(elem => {
                                 var item = `
-                                    <p style="margin:0;padding:0;font-size:14px; margin-top:-10px;" class="print-receipt">${elem.product_name || ''}</p>
-                                    <div style="margin:0; margin-top: -10px; padding: 0; font-size: 14px; display: flex; justify-content: space-between;" class="print-receipt">
+                                    <p style="margin:0;padding:0;font-size:15px;margin-top:-5px" class="print-receipt">${elem.product_name || ''}</p>
+                                    <div style="margin:0; margin-top: -15px; padding: 0; font-size: 14px; display: flex; justify-content: space-between; " class="print-receipt">
                                         <p class="item-note" style="font-style: italic">Note: ${elem.note ? elem.note : '-'}</p>
-                                        <p class="item-qty">${elem.qty}x</p>
+                                        <p class="item-qty" style="margin-right:10px; font-size: 14px; font-weight:bold; align-self: flex-end">${elem.qty}x</p>
                                     </div>
                                 `;
                                 productList += item;
@@ -782,6 +783,30 @@
                         // printWindow.print();
                         var w = window.open('','printreceiptcheck');
                         w.document.write(divContents);
+                        const iframe = document.getElementById('printreceiptcheck-iframe');
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+                        // 1. Create a style element
+                        const style = iframeDoc.createElement('style');
+                        style.type = 'text/css';
+
+                        // 2. Define print-only font rules
+                        const css = `
+                        @page { margin: 0; }
+                        @media print {
+                            body, * {
+                            font-family: "Cutive Mono", monospace !important;
+                            }
+                        }
+                        `;
+
+                        // 3. Inject the style into the iframe
+                        if (style.styleSheet) {
+                            style.styleSheet.cssText = css; // Support for older IE
+                        } else {
+                            style.appendChild(iframeDoc.createTextNode(css));
+                        }
+                        iframeDoc.head.appendChild(style);
                         w.print();
                         w.close();
                     }
