@@ -12,6 +12,8 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+@import url('https://fonts.googleapis.com/css2?family=Cutive+Mono&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap');
+
 /* @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
@@ -24,7 +26,6 @@
         margin: 0;
         padding: 0;
         width: 58mm;
-        font-family: "courier new", monospace !important;
         font-size: 14px;
     }
     #print-report {
@@ -53,6 +54,9 @@
     #printreceiptcheck .print-receipt:last-child {
         page-break-after: auto !important;
         color: blue !important;
+    }
+    #printreceiptcheck-iframe {
+        background: black !important;
     }
 }
 
