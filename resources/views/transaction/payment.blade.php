@@ -213,6 +213,93 @@
             </div>
         </div>
     </div>
+    <div id="printreceiptcheck" class="hidden">
+        <!-- Content to be printed -->
+        <h1 style="text-align: center; margin:0;padding:0" class="print-receipt">CHECK</h1>
+        <h1 style="text-align: center; margin:0;padding:0" class="print-receipt" id="receipt-meja"></h1>
+        <p style="text-align: center; margin:0;padding:0" class="print-receipt">=======================</p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">Date : <span id="receipt-date">{{ date('Y-m-d H:i:s') }}</span></p>
+        <p style="text-align: center; margin:0;padding:0" class="print-receipt">=======================</p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">No Inv : <span id="receipt-invoice-number"></span></p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">Name : <span id="receipt-customer-name"></span></p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">Order Type : <span id="receipt-order-type"></span></p>
+        <p style="text-align: center; margin:0;padding:0; margin-bottom:10px;" class="print-receipt">=======================</p>
+        <div id="receipt-items">
+
+        </div>
+        <p style="text-align: center; margin:0;padding:0; margin-bottom:10px;" class="print-receipt">=======================</p>
+        <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+            <p class="item-subtotal" style="font-style: italic">Subtotal :</p>
+            <p class="item-subtotal-amount" id="receipt-subtotal" style="font-size: 13px; margin-right:5px; font-weight:bold; align-self: flex-end"></p>
+        </div>
+        <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+            <p class="item-tax" style="font-style: italic">Tax :</p>
+            <p class="item-tax-amount" id="receipt-tax" style="font-size: 13px; margin-right:5px; font-weight:bold; align-self: flex-end"></p>
+        </div>
+        <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+            <p class="item-discount" style="font-style: italic">Discount :</p>
+            <p class="item-discount-amount" id="receipt-discount" style="font-size: 13px; margin-right:5px; font-weight:bold; align-self: flex-end"></p>
+        </div>
+        <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+            <p class="item-total" style="font-style: italic">Total :</p>
+            <p class="item-total-amount" id="receipt-total" style="font-size: 13px; margin-right:5px; font-weight:bold; align-self: flex-end"></p>
+        </div>
+        <p style="page-break-after: auto !important"></p>
+
+    </div>
+    <iframe id="printreceiptcheck-withprice" name="printreceiptcheck" class="hidden" style="font-family: Georgia, 'Times New Roman', Times, serif">
+    </iframe>
+    <div id="printreceiptpayment" class="hidden">
+        <!-- Content to be printed -->
+
+        <img id="payment-logo" src="{{ Vite::asset('resources/img/logo-perusahaan.png') }}" style="width: 50%; height: 50px; margin: 0 auto; display: block;"/>
+        <h1 id="payment-name" style="text-align: center; font-size:24px; margin:0;padding:0" class="print-receipt">{{ $resName }}</h1>
+        <p id="payment-alamat" style="text-align: center; font-size:11px; margin:0;padding:0" class="print-receipt">{{ $resLocation }}</p>
+        <p style="text-align: center; margin:0;padding:0" class="print-receipt">=======================</p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">Paid At : <span id="payment-date"></span></p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">No Inv : <span id="payment-invoice-number"></span></p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">Name : <span id="payment-customer-name"></span></p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">Order Type : <span id="payment-order-type"></span></p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">Table : <span id="payment-table"></span></p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">Kasir : <span id="payment-kasir"></span></p>
+        <p style="text-align: center; margin:0;padding:0; margin-bottom:10px;" class="print-receipt">=======================</p>
+        <div id="payment-items">
+
+        </div>
+        <p style="text-align: center; margin:0;padding:0; margin-bottom:10px;" class="print-receipt">=======================</p>
+        <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+            <p class="item-subtotal" style="font-style: italic">Subtotal :</p>
+            <p class="item-subtotal-amount" id="payment-subtotal" style="font-size: 13px; margin-right:5px; font-weight:bold; align-self: flex-end"></p>
+        </div>
+        <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+            <p class="item-tax" style="font-style: italic">Tax :</p>
+            <p class="item-tax-amount" id="payment-tax" style="font-size: 13px; margin-right:5px; font-weight:bold; align-self: flex-end"></p>
+        </div>
+        <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+            <p class="item-discount" style="font-style: italic">Discount :</p>
+            <p class="item-discount-amount" id="payment-discount" style="font-size: 13px; margin-right:5px; font-weight:bold; align-self: flex-end"></p>
+        </div>
+        <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+            <p class="item-total" style="font-style: italic">Total :</p>
+            <p class="item-total-amount" id="payment-total" style="font-size: 13px; margin-right:5px; font-weight:bold; align-self: flex-end"></p>
+        </div>
+        <p style="text-align: center; margin:0;padding:0; margin-bottom:10px;" class="print-receipt">=======================</p>
+        <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+            <p class="item-paid" style="font-style: italic">Paid :</p>
+            <p class="item-paid-amount" id="payment-paid" style="font-size: 13px; margin-right:5px; font-weight:bold; align-self: flex-end"></p>
+        </div>
+        <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+            <p class="item-change" style="font-style: italic">Change :</p>
+            <p class="item-change-amount" id="payment-change" style="font-size: 13px; margin-right:5px; font-weight:bold; align-self: flex-end"></p>
+        </div>
+        <p style="text-align: center; margin:0;padding:0; margin-bottom:5px;" class="print-receipt">=======================</p>
+        <p style="text-align: center; margin:0;padding:0;" class="print-receipt">Terima kasih</p>
+        <p style="text-align: center; margin:0;padding:0;" class="print-receipt">Atas Kunjungan Anda</p>
+        <p style="page-break-after: auto !important"></p>
+
+    </div>
+    <iframe id="printreceiptpayment-check" name="printreceiptpayment" style="visibility: hidden; position: absolute; left: -9999px;">
+    </iframe>
     <script type="module">
         const osInstance = OverlayScrollbars(document.querySelector('.order-item-list'), {});
         const $targetEl = document.getElementById("modal-payment-success");
@@ -278,6 +365,17 @@
          });
          $('#print-check-receipt').on('click',function() {
             loading();
+            $('#printreceiptcheck-withprice').attr('src','about:blank');
+            $('#receipt-meja').text('');
+            $('#receipt-invoice-number').text('');
+            $('#receipt-customer-name').text('');
+            $('#receipt-order-type').text('');
+            $('#receipt-date').text('');
+            $('#receipt-subtotal').text('');
+            $('#receipt-tax').text('');
+            $('#receipt-discount').text('');
+            $('#receipt-total').text('');
+            $('#receipt-items').empty();
             var url = "{{ route('transaction.print.check',':id') }}";
             url = url.replace(':id','{{ $transaction->uuid }}');
             $.ajax({
@@ -285,8 +383,74 @@
                 url: url,
                 success: function(data) {
                     if(data.success == true) {
+                        var transaction = data.transaction;
+                        var discount = transaction.discount ? transaction.discount : 0;
+                        var tax = transaction.tax ? transaction.tax : 0;
+                        $('#receipt-meja').text(transaction.table && transaction.table.name ? transaction.table.name : '');
+                        $('#receipt-invoice-number').text(transaction.invoice_number);
+                        $('#receipt-customer-name').text(transaction.customer_name || 'Guest');
+                        $('#receipt-order-type').text(transaction.order_type ? transaction.order_type.replace('_',' ').toUpperCase() : '');
+                        $('#receipt-date').text(moment(transaction.created_at).format('DD-MM-YY HH:mm:ss') || '{{ date('Y-m-d H:i:s') }}');
+                        $('#receipt-subtotal').text("Rp."+addCommas(transaction.subtotal));
+                        $('#receipt-tax').text("Rp."+addCommas(tax));
+                        $('#receipt-discount').text("Rp."+addCommas(discount));
+                        $('#receipt-total').text("Rp."+addCommas(transaction.total));
+                        $('#receipt-items').empty();
+                        var product = data.transaction.order_item;
+                        var productList = "";
+                        if(transaction.order_item.length > 0) {
+                            transaction.order_item.forEach(elem => {
+                                var item = `
+                                    <p style="margin:0;padding:0;font-size:15px;margin-top:-5px" class="print-receipt">${elem.product_name || ''}</p>
+                                    <div style="margin:0; margin-top: -15px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+                                        <p class="item-note" style="font-style: italic">* Note: ${elem.note ? elem.note : '-'}</p>
+                                    </div>
+                                    <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+                                        <p class="item-note" style="font-style: italic">${elem.qty} x ${"Rp."+addCommas(elem.price)}</p>
+                                        <p class="item-qty" style="margin-right:5px; font-size: 13px; font-weight:bold; align-self: flex-end">${"Rp."+addCommas(elem.subtotal)}</p>
+                                    </div>
+                                `;
+                                productList += item;
+                            });
+                            $('#receipt-items').html(productList);
+                        }
+                        var divContents = $("#printreceiptcheck").html();
+                        // var printWindow = window.open('', '', 'height=400,width=384');
+                        // printWindow.document.write('<html><head><title>DIV Contents</title>');
+                        // printWindow.document.write('</head><body >');
+                        // printWindow.document.write(divContents);
+                        // printWindow.document.write('</body></html>');
+                        // printWindow.print();
+                        var w = window.open('','printreceiptcheck');
+                        w.document.write(divContents);
+                        const iframe = document.getElementById('printreceiptcheck-withprice');
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+                        // 1. Create a style element
+                        const style = iframeDoc.createElement('style');
+                        style.type = 'text/css';
+
+                        // 2. Define print-only font rules
+                        const css = `
+                        @page { margin: 0; }
+                        @media print {
+                            body, * {
+                            font-family: "Cutive Mono", monospace !important;
+                            }
+                        }
+                        `;
+
+                        // 3. Inject the style into the iframe
+                        if (style.styleSheet) {
+                            style.styleSheet.cssText = css; // Support for older IE
+                        } else {
+                            style.appendChild(iframeDoc.createTextNode(css));
+                        }
+                        iframeDoc.head.appendChild(style);
+                        w.print();
+                        w.close();
+
                         removeLoading();
-                        oAlert('green','Success',data.message);
                     }
                 },
                 error: function(data) {
@@ -348,6 +512,16 @@
          });
          $('.print-final-receipt').on('click',function() {
             loading();
+            $('#printreceiptpayment-check').attr('src','about:blank');
+            $('#payment-invoice-number').text('');
+            $('#payment-customer-name').text('');
+            $('#payment-order-type').text('');
+            $('#payment-date').text('');
+            $('#payment-subtotal').text('');
+            $('#payment-tax').text('');
+            $('#payment-discount').text('');
+            $('#payment-total').text('');
+            $('#payment-items').empty();
             var url = "{{ route('transaction.print.payment',':id') }}";
             url = url.replace(':id','{{ $transaction->uuid }}');
             $.ajax({
@@ -356,9 +530,77 @@
                 success: function(data) {
                     if(data.success == true) {
                         removeLoading();
-                        oAlert('green','Success',data.message);
+                        var transaction = data.transaction;
+                        var discount = transaction.discount ? transaction.discount : 0;
+                        var tax = transaction.tax ? transaction.tax : 0;
+                        var paid = transaction.total_paid ? transaction.total_paid : 0;
+                        $('#payment-invoice-number').text(transaction.invoice_number);
+                        $('#payment-customer-name').text(transaction.customer_name || 'Guest');
+                        $('#payment-order-type').text(transaction.order_type ? transaction.order_type.replace('_',' ').toUpperCase() : '');
+                        $('#payment-date').text(moment(transaction.paid_at).format('DD-MM-YY HH:mm:ss'));
+                        $('#payment-table').text(transaction.table && transaction.table.name ? transaction.table.name : '-');
+                        $('#payment-kasir').text(data.user);
+                        $('#payment-subtotal').text("Rp."+addCommas(transaction.subtotal));
+                        $('#payment-tax').text("Rp."+addCommas(tax));
+                        $('#payment-discount').text("Rp."+addCommas(discount));
+                        $('#payment-total').text("Rp."+addCommas(transaction.total));
+                        $('#payment-paid').text("Rp."+addCommas(paid));
+                        $('#payment-change').text("Rp."+addCommas(parseFloat(paid) - parseFloat(transaction.total)));
+                        $('#payment-items').empty();
+                        var product = data.transaction.order_item;
+                        var productList = "";
+                        if(transaction.order_item.length > 0) {
+                            transaction.order_item.forEach(elem => {
+                                var item = `
+                                    <p style="margin:0;padding:0;font-size:15px;margin-top:-5px" class="print-receipt">${elem.product_name || ''}</p>
+                                    <div style="margin:0; margin-top: -15px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+                                        <p class="item-note" style="font-style: italic">* Note: ${elem.note ? elem.note : '-'}</p>
+                                    </div>
+                                    <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
+                                        <p class="item-note" style="font-style: italic">${elem.qty} x ${"Rp."+addCommas(elem.price)}</p>
+                                        <p class="item-qty" style="margin-right:5px; font-size: 13px; font-weight:bold; align-self: flex-end">${"Rp."+addCommas(elem.subtotal)}</p>
+                                    </div>
+                                `;
+                                productList += item;
+                            });
+                            $('#payment-items').html(productList);
+                        }
+                        var divContents = $("#printreceiptpayment").html();
+                        // var printWindow = window.open('', '', 'height=400,width=384');
+                        // printWindow.document.write('<html><head><title>DIV Contents</title>');
+                        // printWindow.document.write('</head><body >');
+                        // printWindow.document.write(divContents);
+                        // printWindow.document.write('</body></html>');
+                        // printWindow.print();
+                        var w = window.open('','printreceiptpayment');
+                        w.document.write(divContents);
+                        const iframepayment = document.getElementById('printreceiptpayment-check');
+                        const iframeDocpayment = iframepayment.contentDocument || iframepayment.contentWindow.document;
+
+                        // 1. Create a style element
+                        const style = iframeDocpayment.createElement('style');
+                        style.type = 'text/css';
+
+                        // 2. Define print-only font rules
+                        const css = `
+                        @page { margin: 0; }
+                        @media print {
+                            body, * {
+                            font-family: "Cutive Mono", monospace !important;
+                            }
+                        }
+                        `;
+
+                        // 3. Inject the style into the iframe
+                        if (style.styleSheet) {
+                            style.styleSheet.cssText = css; // Support for older IE
+                        } else {
+                            style.appendChild(iframeDocpayment.createTextNode(css));
+                        }
+                        iframeDocpayment.head.appendChild(style);
+                        w.print();
+                        w.close();
                     }
-                console.log(data);
                 },
                 error: function(data) {
                     console.log(data.responseJSON.message);

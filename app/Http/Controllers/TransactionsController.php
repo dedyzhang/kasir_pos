@@ -213,7 +213,30 @@ class TransactionsController extends Controller
     public function paymentTransaction(String $uuid) {
         $transaction = Transactions::with('orderItem')->findOrFail($uuid);
         $product = Products::where('is_active',1)->get();
-        return View('transaction.payment',compact('transaction','product'));
+        $setting = Settings::whereIn('jenis',['restaurant_settings','restaurant_logo'])->get();
+        $user_login = User::findOrFail($transaction->user_id);
+        $restaurant_setting = $setting->first(function($elem) {
+            return $elem->jenis == 'restaurant_settings';
+        });
+        $restaurant_logo = $setting->first(function($elem) {
+            return $elem->jenis == 'restaurant_logo';
+        });
+        if($restaurant_logo && $restaurant_logo->nilai) {
+            $imgPath = $restaurant_logo->nilai;
+        } else {
+            $imgPath = "";
+        }
+        
+        if($restaurant_setting && $restaurant_setting->nilai) {
+            $resSetting = unserialize($restaurant_setting->nilai);
+        } else {
+            $resSetting = array();
+        }
+
+        $resName = $resSetting && $resSetting['name'] ? $resSetting['name'] : '';
+        $resLocation = $resSetting && $resSetting['location'] ? $resSetting['location'] : '';
+
+        return View('transaction.payment',compact('transaction','product','imgPath','resName','resLocation'));
     }
     /**
      * Proceed Payment Transaction
@@ -358,7 +381,7 @@ class TransactionsController extends Controller
     }
 
     public function printReceipt(String $uuid) {
-        $transaction = Transactions::with('orderItem')->findOrFail($uuid);
+        $transaction = Transactions::with('orderItem','table')->findOrFail($uuid);
         $setting = Settings::whereIn('jenis',['restaurant_settings','restaurant_logo'])->get();
         $user_login = User::findOrFail($transaction->user_id);
         $restaurant_setting = $setting->first(function($elem) {
@@ -384,64 +407,64 @@ class TransactionsController extends Controller
 
         // echo $imgPath;
         
-        $connector = new WindowsPrintConnector("POS-58");
-        $printer = new Printer($connector);
+        // $connector = new WindowsPrintConnector("POS-58");
+        // $printer = new Printer($connector);
 
-        $printer->setJustification(Printer::JUSTIFY_CENTER);
-        $printer->setTextSize(2,2);
-        $img = EscposImage::load($imgPath,false);
-        $printer->bitImage($img,Printer::IMG_DEFAULT);
-        $printer->text(strtoupper($resName)."\n");
-        $printer->setTextSize(1,1);
-        $printer->text($resLocation."\n");
-        $printer->setJustification(Printer::JUSTIFY_LEFT);
-        $printer->text("===============================\n");
-        $printer->text("\n");
-        $printer->text("Paid Date: " . $transaction->paid_at . "\n");
-        $printer->text("Invoice Number: #" . $transaction->invoice_number . "\n");
-        $printer->text("Customer Name: " . ($transaction->customer_name ?? '-') . "\n");
-        $printer->text("Order Type: " . ($transaction->order_type ?? '-') . "\n");
-        $printer->text($transaction->table && $transaction->table->name ? "Table: ".$transaction->table->name . "\n" : 'Table: ' . "\n");
-        $printer->text("Kasir: " . $user_login->name. "\n");
-        $printer->text("--------------------------------\n");
-        foreach($transaction->orderItem as $item) {
-            $printer->text($item->product_name ."\n");
-            if($item->note) {
-                $printer->text("* Note: " . $item->note . "\n");
-            }
-            $price = "Rp " . number_format($item->subtotal, 0, ',', '.');
-            $priceLine = str_pad($item->qty . " x Rp " . number_format($item->price, 0, ',', '.'), 32 - strlen($price), " ") . $price;
-            $printer->text($priceLine . "\n");
+        // $printer->setJustification(Printer::JUSTIFY_CENTER);
+        // $printer->setTextSize(2,2);
+        // $img = EscposImage::load($imgPath,false);
+        // $printer->bitImage($img,Printer::IMG_DEFAULT);
+        // $printer->text(strtoupper($resName)."\n");
+        // $printer->setTextSize(1,1);
+        // $printer->text($resLocation."\n");
+        // $printer->setJustification(Printer::JUSTIFY_LEFT);
+        // $printer->text("===============================\n");
+        // $printer->text("\n");
+        // $printer->text("Paid Date: " . $transaction->paid_at . "\n");
+        // $printer->text("Invoice Number: #" . $transaction->invoice_number . "\n");
+        // $printer->text("Customer Name: " . ($transaction->customer_name ?? '-') . "\n");
+        // $printer->text("Order Type: " . ($transaction->order_type ?? '-') . "\n");
+        // $printer->text($transaction->table && $transaction->table->name ? "Table: ".$transaction->table->name . "\n" : 'Table: ' . "\n");
+        // $printer->text("Kasir: " . $user_login->name. "\n");
+        // $printer->text("--------------------------------\n");
+        // foreach($transaction->orderItem as $item) {
+        //     $printer->text($item->product_name ."\n");
+        //     if($item->note) {
+        //         $printer->text("* Note: " . $item->note . "\n");
+        //     }
+        //     $price = "Rp " . number_format($item->subtotal, 0, ',', '.');
+        //     $priceLine = str_pad($item->qty . " x Rp " . number_format($item->price, 0, ',', '.'), 32 - strlen($price), " ") . $price;
+        //     $printer->text($priceLine . "\n");
             
-        }
-        $printer->text("--------------------------------\n");
-        $subtotal = "Rp " . number_format($transaction->subtotal, 0, ',', '.');
-        $printer->text(str_pad("Subtotal: ", 32 - strlen($subtotal), " ") . $subtotal . "\n");
-        $tax = "Rp " . number_format($transaction->tax, 0, ',', '.');
-        $printer->text(str_pad("Tax: ", 32 - strlen($tax), " ") . $tax . "\n");
-        $discount = "Rp " . number_format($transaction->discount, 0, ',', '.');
-        $printer->text(str_pad("Discount: ", 32 - strlen($discount), " ") . $discount . "\n");
-        $total = "Rp " . number_format($transaction->total, 0, ',', '.');
-        $totalLine = str_pad("Total: ", 32 - strlen($total), " ") . $total;
-        $printer->text($totalLine . "\n");
-        $printer->text("--------------------------------\n");
-        $paid = "Rp " . number_format($transaction->total_paid, 0, ',', '.');
-        $printer->text(str_pad("Paid: ", 32 - strlen($paid), " ") . $paid . "\n");
-        $changeCalc = $transaction->total_paid - $transaction->total;
-        $change = "Rp " . number_format($changeCalc, 0, ',', '.');
-        $printer->text(str_pad("Change: ", 32 - strlen($change), " ") . $change . "\n");
-        $printer->text("===============================\n");
-        $printer->text("\n");
-        $printer->setJustification(Printer::JUSTIFY_CENTER);
-        $printer->text("Terima kasih \n");
-        $printer->text("Atas Kunjungan Anda \n");
+        // }
+        // $printer->text("--------------------------------\n");
+        // $subtotal = "Rp " . number_format($transaction->subtotal, 0, ',', '.');
+        // $printer->text(str_pad("Subtotal: ", 32 - strlen($subtotal), " ") . $subtotal . "\n");
+        // $tax = "Rp " . number_format($transaction->tax, 0, ',', '.');
+        // $printer->text(str_pad("Tax: ", 32 - strlen($tax), " ") . $tax . "\n");
+        // $discount = "Rp " . number_format($transaction->discount, 0, ',', '.');
+        // $printer->text(str_pad("Discount: ", 32 - strlen($discount), " ") . $discount . "\n");
+        // $total = "Rp " . number_format($transaction->total, 0, ',', '.');
+        // $totalLine = str_pad("Total: ", 32 - strlen($total), " ") . $total;
+        // $printer->text($totalLine . "\n");
+        // $printer->text("--------------------------------\n");
+        // $paid = "Rp " . number_format($transaction->total_paid, 0, ',', '.');
+        // $printer->text(str_pad("Paid: ", 32 - strlen($paid), " ") . $paid . "\n");
+        // $changeCalc = $transaction->total_paid - $transaction->total;
+        // $change = "Rp " . number_format($changeCalc, 0, ',', '.');
+        // $printer->text(str_pad("Change: ", 32 - strlen($change), " ") . $change . "\n");
+        // $printer->text("===============================\n");
+        // $printer->text("\n");
+        // $printer->setJustification(Printer::JUSTIFY_CENTER);
+        // $printer->text("Terima kasih \n");
+        // $printer->text("Atas Kunjungan Anda \n");
 
-        $printer->cut();
+        // $printer->cut();
 
-        /* Close printer */
-        $printer->close();
+        // /* Close printer */
+        // $printer->close();
 
-        return response()->json(['success' => true, 'message' => 'Check receipt printed successfully']);
+        return response()->json(['success' => true, 'message' => 'Check receipt printed successfully','transaction' => $transaction,'restaurant' => ['name' => $resName, 'location' => $resLocation, 'logo' => $imgPath],'user' => $user_login->name]);
     }
     // test Print
     // public function testPrint() {
