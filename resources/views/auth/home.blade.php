@@ -338,11 +338,11 @@
         <h1 style="text-align: center; margin:0;padding:0" class="print-receipt">CHECK</h1>
         <h1 style="text-align: center; margin:0;padding:0" class="print-receipt" id="receipt-meja"></h1>
         <p style="text-align: center; margin:0;padding:0" class="print-receipt">=======================</p>
-        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Date : <span id="receipt-date">{{ date('Y-m-d H:i:s') }}</span></p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">Date : <span id="receipt-date">{{ date('Y-m-d H:i:s') }}</span></p>
         <p style="text-align: center; margin:0;padding:0" class="print-receipt">=======================</p>
-        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">No Inv : <span id="receipt-invoice-number"></span></p>
-        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Name : <span id="receipt-customer-name"></span></p>
-        <p style="margin:0;padding:0;font-size:14px" class="print-receipt">Order Type : <span id="receipt-order-type"></span></p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">No Inv : <span id="receipt-invoice-number"></span></p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">Name : <span id="receipt-customer-name"></span></p>
+        <p style="margin:0;padding:0;font-size:13px" class="print-receipt">Order Type : <span id="receipt-order-type"></span></p>
         <p style="text-align: center; margin:0;padding:0; margin-bottom:10px;" class="print-receipt">=======================</p>
         <div id="receipt-items">
 
@@ -762,9 +762,9 @@
                             transaction.order_item.forEach(elem => {
                                 var item = `
                                     <p style="margin:0;padding:0;font-size:15px;margin-top:-5px" class="print-receipt">${elem.product_name || ''}</p>
-                                    <div style="margin:0; margin-top: -15px; padding: 0; font-size: 14px; display: flex; justify-content: space-between; " class="print-receipt">
+                                    <div style="margin:0; margin-top: -15px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
                                         <p class="item-note" style="font-style: italic">Note: ${elem.note ? elem.note : '-'}</p>
-                                        <p class="item-qty" style="margin-right:10px; font-size: 14px; font-weight:bold; align-self: flex-end">${elem.qty}x</p>
+                                        <p class="item-qty" style="margin-right:5px; font-size: 13px; font-weight:bold; align-self: flex-end">${elem.qty}x</p>
                                     </div>
                                 `;
                                 productList += item;
