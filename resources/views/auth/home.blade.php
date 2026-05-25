@@ -21,32 +21,32 @@
         @endif
         
         <div class="categories-list max-w-full overflow-x-auto" id="categories-list">
-            <ul class="inline-flex gap-3 mb-5">
-                <li class="group w-40">
+            <ul class="inline-flex gap-2 md:gap-3 mb-3 md:mb-5">
+                <li class="group w-28 md:w-40 shrink-0">
                         <input type="radio" id="categories-all-item" name="category_filter" value="all-item" class="hidden peer category_filter" checked>
-                        <label for="categories-all-item" class="inline-flex items-center justify-between w-full p-3 text-body bg-neutral-primary-soft border border-default rounded-base cursor-pointer peer-checked:hover:bg-brand-softer peer-checked:border-brand-subtle peer-checked:bg-brand-softer hover:bg-neutral-secondary-medium peer-checked:text-fg-brand-strong ">                           
-                            <div class="flex flex-wrap gap-2">
-                                <div class="icon-place w-10 h-10 rounded-full bg-brand-subtle mb-1 flex items-center justify-center">
-                                    <i class="fas fa-apple-whole text-body text-lg"></i>
+                        <label for="categories-all-item" class="inline-flex items-center justify-between w-full p-2 md:p-3 text-body bg-neutral-primary-soft border border-default rounded-base cursor-pointer peer-checked:hover:bg-brand-softer peer-checked:border-brand-subtle peer-checked:bg-brand-softer hover:bg-neutral-secondary-medium peer-checked:text-fg-brand-strong ">                           
+                            <div class="flex flex-wrap gap-1 md:gap-2">
+                                <div class="icon-place w-8 h-8 md:w-10 md:h-10 rounded-full bg-brand-subtle mb-0.5 md:mb-1 flex items-center justify-center">
+                                    <i class="fas fa-apple-whole text-body text-sm md:text-lg"></i>
                                 </div>
                                 <div class="text-place w-full">
-                                    <p class="text-lg">All Items</p>
-                                    <p class="">{{ $products->count() }} Items</p>
+                                    <p class="text-xs md:text-lg font-semibold truncate">All Items</p>
+                                    <p class="text-[9px] md:text-sm text-gray-400">{{ $products->count() }} Items</p>
                                 </div>
                             </div>
                         </label>
                     </li>
                 @foreach ($categories as $category)
-                    <li class="group w-40">
+                    <li class="group w-28 md:w-40 shrink-0">
                         <input type="radio" id="categories-{{ $category->uuid }}" name="category_filter" value="{{ $category->uuid }}" class="hidden peer category_filter">
-                        <label for="categories-{{ $category->uuid }}" class="inline-flex items-center justify-between w-full text-body bg-neutral-primary-soft border border-default rounded-base cursor-pointer peer-checked:hover:bg-brand-softer peer-checked:border-brand-subtle peer-checked:bg-brand-softer hover:bg-neutral-secondary-medium peer-checked:text-fg-brand-strong">                           
-                            <div class="flex flex-wrap gap-2 relative p-3">
-                                <div class="icon-place w-10 h-10 rounded-full bg-brand-subtle mb-1 flex items-center justify-center">
-                                    <i class="fas {{ $category->icon }} text-body text-lg"></i>
+                        <label for="categories-{{ $category->uuid }}" class="inline-flex items-center justify-between w-full p-2 md:p-3 text-body bg-neutral-primary-soft border border-default rounded-base cursor-pointer peer-checked:hover:bg-brand-softer peer-checked:border-brand-subtle peer-checked:bg-brand-softer hover:bg-neutral-secondary-medium peer-checked:text-fg-brand-strong">                           
+                            <div class="flex flex-wrap gap-1 md:gap-2 relative w-full">
+                                <div class="icon-place w-8 h-8 md:w-10 md:h-10 rounded-full bg-brand-subtle mb-0.5 md:mb-1 flex items-center justify-center">
+                                    <i class="fas {{ $category->icon }} text-body text-sm md:text-lg"></i>
                                 </div>
                                 <div class="text-place w-full">
-                                    <p class="text-lg">{{$category->nama}}</p>
-                                    <p class="">{{ $category->products()->count() }} Items</p>
+                                    <p class="text-xs md:text-lg font-semibold truncate">{{$category->nama}}</p>
+                                    <p class="text-[9px] md:text-sm text-gray-400">{{ $category->products()->count() }} Items</p>
                                 </div>
                             </div>
                         </label>
@@ -61,38 +61,38 @@
             </div>
             <input type="text" class="bg-neutral-primary focus:bg-brand-softer w-full px-5 py-4 rounded-full border-0 outline-0 placeholder-gray-500" name="search" id="searchInput" placeholder="Search Something Delicious On Your Mind">
         </div>
-        <div class="product-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2 pb-32 md:pb-0">
+        <div class="product-list grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-4 mt-2 pb-36">
             @foreach ($products as $product)
-                <div class="col-span-1 {{ $product->is_active == 1 ? 'bg-white' : 'bg-slate-200' }} rounded-lg p-3 flex flex-wrap gap-3 cursor-pointer product-item" data-uuid="{{ $product->uuid }}" data-category="{{ $product->category_id }}">
-                    <div class="img-place w-full h-30 rounded-base overflow-hidden">
+                <div class="col-span-1 {{ $product->is_active == 1 ? 'bg-white' : 'bg-slate-200' }} rounded-lg p-2 md:p-3 flex flex-wrap gap-2 md:gap-3 cursor-pointer product-item" data-uuid="{{ $product->uuid }}" data-category="{{ $product->category_id }}">
+                    <div class="img-place w-full h-20 sm:h-24 md:h-30 rounded-base overflow-hidden">
                         <img src="{{ $product->picture == "" ? Vite::asset('resources/img/no_image_available.png') : asset('storage/products/'.$product->picture) }}" class="w-full h-full object-cover object-center" />
                     </div>
                     <div class="product-detail w-full">
-                        <p class="name-product text-base mb-2">{{Str::limit($product->name,20,'...')}}</p>
-                        <div class="product-price-detail flex gap-2 w-full justify-between items-center">
+                        <p class="name-product text-xs sm:text-sm md:text-base mb-1 md:mb-2 font-medium truncate">{{Str::limit($product->name,20,'...')}}</p>
+                        <div class="product-price-detail flex flex-wrap gap-1 w-full justify-between items-center">
                             @php
                                 $splitcolor = explode('-',$product->category->color);
                                 $color = $splitcolor[1];
                             @endphp
-                            <p class="categories-product {{ $product->category->color }} text-{{ $color }}-800 px-3 py-1 rounded-full text-[10px]">{{$product->category->nama}}</p>
-                            <p class="price-product text-xl">Rp.{{ number_format($product->price,0,',') }},-</p>
+                            <p class="categories-product {{ $product->category->color }} text-{{ $color }}-800 px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[9px] md:text-[10px]">{{$product->category->nama}}</p>
+                            <p class="price-product text-xs sm:text-sm md:text-lg font-bold text-neutral-800">Rp.{{ number_format($product->price,0,',') }},-</p>
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
-        <div  class="order-list p-3 bg-white fixed bottom-0 left-0 w-full md:w-[calc(100%-350px)] lg:w-[calc(100%-450px)]">
+        <div  class="order-list p-2 md:p-3 bg-white fixed bottom-0 left-0 w-full md:w-[calc(100%-350px)] lg:w-[calc(100%-450px)]">
             <div id="order-list" class="max-w-full overflow-x-auto" >
                 <ul class="inline-flex gap-3" id="order">
                     <li class="order-item" id="order-item-button">
-                        <button class="bg-neutral-50 border-2 text-gray-700 border-dashed border-gray-400 hover:bg-neutral-100 h-20 rounded-lg w-60 cursor-pointer add-order-button">Add Order</button>
+                        <button class="bg-neutral-50 border-2 text-gray-700 border-dashed border-gray-400 hover:bg-neutral-100 h-16 md:h-20 rounded-lg w-44 md:w-60 cursor-pointer add-order-button text-sm md:text-base">Add Order</button>
                     </li>
                     @foreach ($transactions as $transaction)
-                        <li class="order-item customer border border-gray-400 w-55 h-20 bg-primary border-primary hover:bg-brand-softer cursor-pointer rounded-lg p-3 relative" data-uuid="{{ $transaction->uuid }}">
-                            <p class="order-name text-lg text-neutral-700 mb-2">{{$transaction->customer_name != null ? $transaction->customer_name : 'Guest'}}</p>
+                        <li class="order-item customer border border-gray-400 w-44 md:w-55 h-16 md:h-20 bg-primary border-primary hover:bg-brand-softer cursor-pointer rounded-lg p-2 md:p-3 relative" data-uuid="{{ $transaction->uuid }}">
+                            <p class="order-name text-sm md:text-lg text-neutral-700 mb-1 md:mb-2 font-medium truncate pr-14">{{$transaction->customer_name != null ? $transaction->customer_name : 'Guest'}}</p>
                             <div class="flex order-subdetail justify-between">
-                                <p class="table-detail text-sm text-neutral-400"><span class="table-detail-place">{{ $transaction->table_id != null && $transaction->table ? $transaction->table->name : "Unset Table" }}</span> - <span class="order-type-detail">{{$transaction->order_type != null ? $transaction->order_type : ""}}</span></p>
-                                <p class="time-detail text-sm text-neutral-400">{{date('H:i',strtotime($transaction->created_at))}}</p>
+                                <p class="table-detail text-xs md:text-sm text-neutral-400 truncate"><span class="table-detail-place">{{ $transaction->table_id != null && $transaction->table ? $transaction->table->name : "Unset Table" }}</span> - <span class="order-type-detail">{{$transaction->order_type != null ? $transaction->order_type : ""}}</span></p>
+                                <p class="time-detail text-xs md:text-sm text-neutral-400 whitespace-nowrap ml-1">{{date('H:i',strtotime($transaction->created_at))}}</p>
                             </div>
                             @php
                                 if($transaction->status == 'active') {
@@ -103,7 +103,7 @@
                                     $class_color = "bg-yellow-200 text-yellow-600";
                                 }
                             @endphp
-                            <p class="order-status {{ $class_color }} px-2 py-1 rounded-full text-xs absolute top-4 right-2">{{$transaction->status}}</p>
+                            <p class="order-status {{ $class_color }} px-2 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs absolute top-2 right-2 md:top-4">{{$transaction->status}}</p>
                         </li>
                     @endforeach
                     
@@ -114,12 +114,12 @@
         
 
         {{-- Modal Place --}}
-        <div id="modal-preview-products" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-start w-full md:inset-0 h-full max-h-full z-99">
-            <div class="relative p-4 w-full max-w-xl max-h-[90%]">
+        <div id="modal-preview-products" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full max-h-full z-99">
+            <div class="relative p-2 md:p-4 w-full max-w-xl max-h-[95vh]">
                 <!-- Modal content -->
-                <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700 max-h-[90vh] flex flex-col overflow-hidden">
                     <!-- Modal header -->
-                    <div class="flex items-center justify-between p-3 md:p-3 rounded-t text-start sm:text-center">
+                    <div class="flex items-center justify-between p-3 rounded-t text-start sm:text-center shrink-0 border-b border-gray-100">
                         <h3 class="text-lg font-semibold text-dark-soft w-full">
                             Detail Products
                         </h3>
@@ -134,22 +134,22 @@
                         </div>
                     </div>
                     <!-- Modal body -->
-                    <div>
+                    <div class="overflow-y-auto flex-1 flex flex-col">
                         <input type="hidden" name="uuid_product" id="uuid_product" />
-                        <div class="picture-place flex align-center justify-center p-4 md:p-4 space-y-4">
-                            <div class="w-full h-70 rounded-lg">
-                                <img src="" class="picture_product w-full h-70 object-cover object-center rounded-lg" />
+                        <div class="picture-place flex align-center justify-center p-2 md:p-4 space-y-4 shrink-0">
+                            <div class="w-full h-40 md:h-70 rounded-lg overflow-hidden">
+                                <img src="" class="picture_product w-full h-40 md:h-70 object-cover object-center rounded-lg cursor-pointer hover:opacity-90 transition-opacity" title="Klik untuk memperbesar" />
                             </div>
                         </div>
-                        <div class="text-place w-full flex flex-wrap gap-2 p-4">
+                        <div class="text-place w-full flex flex-wrap gap-1.5 md:gap-2 p-3 md:p-4">
                             <p class="category-product px-3 py-1 rounded-full text-[10px]"></p>
-                            <h5 class="product-name text-2xl w-full font-semibold text-dark-soft"></h5>
-                            <p class="product-description text-dark-soft"></p> 
-                            <p class="product-price text-brand-light font-bold text-2xl w-full"></p>   
-                            <textarea id="descriptionOrder" class="description-order w-full border-0 bg-gray-50 placeholder-gray-400 bg-neutral outline-0 rounded-base focus:outline-brand focus:bg-brand-subtle" placeholder="Masukkan Catatan"></textarea>
+                            <h5 class="product-name text-xl md:text-2xl w-full font-semibold text-dark-soft"></h5>
+                            <p class="product-description text-xs md:text-sm text-dark-soft"></p> 
+                            <p class="product-price text-brand-light font-bold text-xl md:text-2xl w-full"></p>   
+                            <textarea id="descriptionOrder" class="description-order w-full border-0 bg-gray-50 placeholder-gray-400 bg-neutral outline-0 rounded-base focus:outline-brand focus:bg-brand-subtle text-sm" placeholder="Masukkan Catatan"></textarea>
                         </div>
-                        <label for="quantity-input" class="block mb-2.5 ps-4 text-sm font-medium text-heading">Quantity:</label>
-                        <div class="relative flex items-center w-full shadow-xs rounded-base ps-4 pe-4 pb-4">
+                        <label for="quantity-input" class="block mb-1.5 ps-3 md:ps-4 text-xs md:text-sm font-medium text-heading">Quantity:</label>
+                        <div class="relative flex items-center w-full shadow-xs rounded-base ps-3 pe-3 pb-3 md:ps-4 md:pe-4 md:pb-4">
                             <button type="button" id="decrement-button" data-input-counter-decrement="quantity-input" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading font-medium leading-5 rounded-s-base text-sm px-3 focus:outline-none h-10">
                                 <svg class="w-4 h-4 text-heading" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"/></svg>
                             </button>
@@ -158,12 +158,24 @@
                                 <svg class="w-4 h-4 text-heading" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/></svg>
                             </button>
                         </div>
-                        <button class="place-order-button bg-brand rounded-bl-lg rounded-br-lg text-neutral-50 hover:bg-brand-strong cursor-pointer w-full py-3">
+                        <button class="place-order-button bg-brand rounded-bl-lg rounded-br-lg text-neutral-50 hover:bg-brand-strong cursor-pointer w-full py-2.5 md:py-3 shrink-0">
                             Add To Cart <i class="fas fa-cart-plus"></i>
                         </button>
                     </div>
 
                 </div>
+            </div>
+        </div>
+
+        {{-- Fullscreen Image Viewer Modal --}}
+        <div id="modal-fullscreen-image" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md transition-opacity duration-300 opacity-0">
+            <button id="close-fullscreen-image" class="absolute top-4 right-4 text-white hover:text-gray-300 focus:outline-none bg-white/10 hover:bg-white/20 p-2.5 rounded-full z-[110] cursor-pointer transition-colors duration-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <div class="relative max-w-[95vw] max-h-[90vh] p-2 flex items-center justify-center">
+                <img id="fullscreen-image-element" src="" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl transition-transform duration-300 cursor-zoom-out hover:scale-[1.02]" />
             </div>
         </div>
         <div id="modal-edit-transaction" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full max-h-full z-99">
@@ -207,7 +219,7 @@
                     <!-- Modal header -->
                     <div class="flex items-center justify-between p-3 md:p-3 rounded-t text-start sm:text-center">
                         <h3 class="text-lg font-semibold text-dark-soft w-full">
-                            Order Detail
+                            Edit Order Item
                         </h3>
                         <div class="button-place flex gap-1">
                             
@@ -221,13 +233,50 @@
                     </div>
                     <!-- Modal body -->
                     <div>
-                        <div class="grid grid-cols-1 p-4 w-full">
+                        <div class="grid grid-cols-1 p-4 w-full gap-3">
                             <input type="hidden" name="uuid_order" id="uuid_order" />
-                            <label for="order_description">Order Notes</label>
-                            <textarea name="order_description" id="order_description" class="w-full border border-gray-300 bg-gray-50 placeholder-gray-400 bg-neutral outline-0 rounded-base focus:outline-brand focus:bg-brand-subtle" placeholder="Write Down Order Notes"></textarea>
-                            <div class="flex flex-wrap w-full gap-1 mt-2">
-                                <button class="bg-brand w-full sm:w-auto text-white rounded-base px-4 py-2 mt-2 hover:bg-brand-strong cursor-pointer save-note-button">Save Notes</button>
-                                <button class="bg-danger w-full sm:w-auto text-white rounded-base px-4 py-2 mt-2 hover:bg-danger-strong cursor-pointer delete-order-button">Delete Order</button>
+
+                            {{-- Nama Produk --}}
+                            <div>
+                                <label for="order_product_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-tag text-xs mr-1 text-brand-light"></i> Nama Produk
+                                </label>
+                                <input type="text" id="order_product_name" name="order_product_name"
+                                    class="w-full border border-gray-300 bg-gray-50 placeholder-gray-400 rounded-base px-3 py-2 outline-0 focus:outline-brand focus:bg-brand-subtle text-sm"
+                                    placeholder="Nama produk pada struk" />
+                            </div>
+
+                            {{-- Harga --}}
+                            <div>
+                                <label for="order_price" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-coins text-xs mr-1 text-brand-light"></i> Harga (per item)
+                                </label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-3 flex items-center text-gray-500 text-sm">Rp</span>
+                                    <input type="number" id="order_price" name="order_price" min="0"
+                                        class="w-full border border-gray-300 bg-gray-50 placeholder-gray-400 rounded-base pl-10 pr-3 py-2 outline-0 focus:outline-brand focus:bg-brand-subtle text-sm"
+                                        placeholder="0" />
+                                </div>
+                                <p class="text-xs text-gray-400 mt-1">Subtotal akan dikalkulasi ulang otomatis dari harga × qty.</p>
+                            </div>
+
+                            {{-- Catatan --}}
+                            <div>
+                                <label for="order_description" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-sticky-note text-xs mr-1 text-brand-light"></i> Catatan Order
+                                </label>
+                                <textarea name="order_description" id="order_description"
+                                    class="w-full border border-gray-300 bg-gray-50 placeholder-gray-400 bg-neutral outline-0 rounded-base focus:outline-brand focus:bg-brand-subtle text-sm px-3 py-2"
+                                    rows="2" placeholder="Tulis catatan order di sini…"></textarea>
+                            </div>
+
+                            <div class="flex flex-wrap w-full gap-2 mt-1">
+                                <button class="bg-brand flex-1 text-white rounded-base px-4 py-2 hover:bg-brand-strong cursor-pointer save-note-button">
+                                    <i class="fas fa-save mr-1"></i> Simpan
+                                </button>
+                                <button class="bg-danger flex-1 text-white rounded-base px-4 py-2 hover:bg-danger-strong cursor-pointer delete-order-button">
+                                    <i class="fas fa-trash mr-1"></i> Hapus Item
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -235,6 +284,7 @@
                 </div>
             </div>
         </div>
+
         
         <div id="modal-see-transaction" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full max-h-full z-99">
             <div class="relative p-4 w-full max-w-xl max-h-[90%]">
@@ -286,50 +336,52 @@
         </div>
     </div>
     <div class="button-to-open-order">
-        <button class="bg-brand text-neutral-50 hover:bg-brand-strong cursor-pointer w-16 h-16 rounded-tl-full rounded-bl-full fixed bottom-30 right-0 md:hidden flex justify-center items-center open-order-button open-close-order">
+        <button class="bg-brand text-neutral-50 hover:bg-brand-strong cursor-pointer w-16 h-16 rounded-tl-full rounded-bl-full fixed bottom-30 right-0 md:hidden flex justify-center items-center open-order-button open-close-order transition-transform duration-300 ease-in-out z-50">
             <i class="fas fa-shopping-cart text-xl"></i>
         </button>
     </div>
     {{-- Order Place --}}
     
-    <div class="order-container fixed top-0 right-0 w-[0px] md:w-[350px] lg:w-[450px] h-full bg-white shadow-lg md:block">
-        <div class="order-form hidden">
-            <input type="hidden" id="transaction-id" name="transaction-id" value="" />
-            <div class="customer-name-place text-center px-2 py-4 w-full shadow-md relative">
-                <p class="text-gray-500 m-0 text-lg font-semibold order-form-name">Guest</p>
-                <p class="text-gray-400 text-base order-form-id">Order ID #001</p>
-                <button id="edit_transaction_detail" class="absolute top-4 right-4 bg-gray-50 hover:bg-blue-500 group rounded-full p-3 cursor-pointer"><i class="fa-solid fa-pencil text-xl text-gray-500 group-hover:text-white"></i></button>
-            </div>
-            <div class="customer-detail-place p-2 w-full flex gap-3 shadow">
-                <select type="select" id="meja" class="js-example-basic-single w-full bg-gray-50 rounded-full ps-6 pe-2 py-2 border border-gray-200 focus:border-blue-500 focus:ring-0 select2 text-sm" >
-                    <option value="" disabled selected>Select Table</option>
-                    @foreach ($tables as $table)
-                        <option value="{{ $table->uuid }}">{{ $table->name }}</option>
-                    @endforeach
-                </select>
-                <select type="select" id="orderType" class="js-example-basic-single w-full bg-gray-50 rounded-full ps-6 pe-2 py-2 border border-gray-200 focus:border-blue-500 focus:ring-0 select2 text-sm" >
-                    <option value="" disabled selected>Select Type</option>
-                    <option value="take_away">Take Away</option>
-                    <option value="dine_in">Dine In</option>
-                </select>
-                
-            </div>
-            <div class="product-item-detail p-2 w-full h-[calc(100vh-180px)] max-h-full overflow-y-scroll">
-                <ul class="product-item-list w-full">
-                    
-                </ul>
-            </div>
-            <div class="order-total-place w-full border-t border-gray-200 h-[140px] flex flex-wrap items-start">
-                <div class="flex justify-between items-center p-3 w-full">
-                    <p class="text-gray-500 font-semibold">Subtotal</p>
-                    <p class="text-lg font-bold order-total-price">Rp 0</p>
+    <div class="order-container fixed top-0 right-0 w-[350px] lg:w-[450px] h-full bg-white shadow-lg md:block overflow-hidden translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-40">
+        <div class="order-form hidden h-full">
+            <div class="flex flex-col h-full">
+                <input type="hidden" id="transaction-id" name="transaction-id" value="" />
+                <div class="customer-name-place text-center px-2 py-4 w-full shadow-md relative shrink-0">
+                    <p class="text-gray-500 m-0 text-lg font-semibold order-form-name">Guest</p>
+                    <p class="text-gray-400 text-base order-form-id">Order ID #001</p>
+                    <button id="edit_transaction_detail" class="absolute top-4 right-4 bg-gray-50 hover:bg-blue-500 group rounded-full p-3 cursor-pointer"><i class="fa-solid fa-pencil text-xl text-gray-500 group-hover:text-white"></i></button>
                 </div>
-                <div class="flex w-full">
-                    <button class="submit-order self-end bg-brand text-neutral-50 hover:bg-brand-strong cursor-pointer w-full py-3">Submit Order</button>
+                <div class="customer-detail-place p-2 w-full flex gap-3 shadow shrink-0">
+                    <select type="select" id="meja" class="js-example-basic-single w-full bg-gray-50 rounded-full ps-6 pe-2 py-2 border border-gray-200 focus:border-blue-500 focus:ring-0 select2 text-sm" >
+                        <option value="" disabled selected>Select Table</option>
+                        @foreach ($tables as $table)
+                            <option value="{{ $table->uuid }}">{{ $table->name }}</option>
+                        @endforeach
+                    </select>
+                    <select type="select" id="orderType" class="js-example-basic-single w-full bg-gray-50 rounded-full ps-6 pe-2 py-2 border border-gray-200 focus:border-blue-500 focus:ring-0 select2 text-sm" >
+                        <option value="" disabled selected>Select Type</option>
+                        <option value="take_away">Take Away</option>
+                        <option value="dine_in">Dine In</option>
+                    </select>
+                    
+                </div>
+                <div class="product-item-detail p-2 w-full flex-1 overflow-y-auto">
+                    <ul class="product-item-list w-full">
+                        
+                    </ul>
+                </div>
+                <div class="order-total-place w-full border-t border-gray-200 shrink-0 flex flex-col items-start bg-white">
+                    <div class="flex justify-between items-center p-3 w-full">
+                        <p class="text-gray-500 font-semibold">Subtotal</p>
+                        <p class="text-lg font-bold order-total-price">Rp 0</p>
+                    </div>
+                    <div class="flex w-full p-2 pt-0">
+                        <button class="submit-order bg-brand text-neutral-50 hover:bg-brand-strong cursor-pointer w-full py-3 rounded-lg font-semibold">Submit Order</button>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="standby-form flex justify-center items-center">
+        <div class="standby-form flex justify-center items-center h-full">
             <img src="{{ Vite::asset('resources/img/start-order.png') }}" class="w-full h-auto" />
         </div>
     </div>
@@ -367,21 +419,36 @@
             backdropClasses: "bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40",
             closable: true,
         };
+        const optionsStatic = {
+            placement: "center",
+            backdrop: "static",
+            backdropClasses: "bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40",
+            closable: true,
+        };
         const modal = new Modal($targetEl,options);
         const modal2 = new Modal($targetEditTransaction,options);
-        const modal3 = new Modal($targetEditOrder,options);
+        const modal3 = new Modal($targetEditOrder,optionsStatic);
         const modal4 = new Modal(document.getElementById('modal-see-transaction'),options);
         
         //Tutup buka Samping Orderan untuk layar kecil
         $('.open-close-order').on('click',function() {
-            if($(this).hasClass('right-0')) {
-                $(this).removeClass('right-0').addClass('right-[350px]');
-                $('.order-container').addClass('w-[350px]').removeClass('w-[0px]');
+            if($('.order-container').hasClass('translate-x-full')) {
+                $('.order-container').removeClass('translate-x-full').addClass('translate-x-0');
+                $(this).addClass('-translate-x-[350px]');
             } else {
-                $(this).removeClass('right-[350px]').addClass('right-0');
-                $('.order-container').addClass('w-[0px]').removeClass('w-[350px]');
+                $('.order-container').addClass('translate-x-full').removeClass('translate-x-0');
+                $(this).removeClass('-translate-x-[350px]');
             }
         });
+
+        // Helper: hitung ulang total keranjang dari semua item data-subtotal
+        function recalculateCartTotal() {
+            var total = 0;
+            $('.product-item-list li[data-subtotal]').each(function() {
+                total += parseInt($(this).attr('data-subtotal') || 0);
+            });
+            $('.order-total-price').text('Rp. ' + addCommas(total) + ',-');
+        }
 
         // tombol buka modul
         $('.product-item').on('click',function(){
@@ -480,7 +547,7 @@
                             }
                             
                             var orderList = `
-                                <li class="flex relative w-full mb-2 border-b-2 border-dashed border-gray-300 p-3" data-uuid="${orderItem.uuid}">
+                                <li class="flex relative w-full mb-2 border-b-2 border-dashed border-gray-300 p-3" data-uuid="${orderItem.uuid}" data-subtotal="${orderItem.subtotal}" data-price="${orderItem.price}">
                                     <div class="product-image h-20 w-20">
                                         <img class="h-20 w-20 object-cover rounded-lg" src="${image}">
                                     </div>
@@ -554,6 +621,10 @@
                 success: function(data) {
                     $('.order-form').removeClass('hidden');
                     $('.standby-form').addClass('hidden');
+                    if ($('.order-container').hasClass('translate-x-full')) {
+                        $('.order-container').removeClass('translate-x-full').addClass('translate-x-0');
+                        $('.open-close-order').addClass('-translate-x-[350px]');
+                    }
                     var transaction = data.transaction;
                     var name = transaction.customer_name ? transaction.customer_name : "Guest";
                     var table = transaction.table && transaction.table.name ? transaction.table.name : "Unset Table";
@@ -570,13 +641,13 @@
                     $('.order-total-price').text("Rp. "+addCommas(newTotal));
                     $('#order .customer').removeClass('bg-brand-soft');
                     var orderListItem = `
-                        <li class="order-item customer border border-gray-400 w-55 h-20 bg-brand-soft hover:bg-brand-softer cursor-pointer rounded-lg p-3 relative" data-uuid="${data.transaction.uuid}">
-                            <p class="order-name text-lg text-neutral-700 mb-2">${name}</p>
+                        <li class="order-item customer border border-gray-400 w-44 md:w-55 h-16 md:h-20 bg-brand-soft hover:bg-brand-softer cursor-pointer rounded-lg p-2 md:p-3 relative" data-uuid="${data.transaction.uuid}">
+                            <p class="order-name text-sm md:text-lg text-neutral-700 mb-1 md:mb-2 font-medium truncate pr-14">${name}</p>
                             <div class="flex order-subdetail justify-between">
-                                <p class="table-detail text-sm text-neutral-400"><span class="table-detail-place">${table}</span> - <span class="order-type-detail">${orderType}</span></p>
-                                <p class="time-detail text-sm text-neutral-400">${time}</p>
+                                <p class="table-detail text-xs md:text-sm text-neutral-400 truncate"><span class="table-detail-place">${table}</span> - <span class="order-type-detail">${orderType}</span></p>
+                                <p class="time-detail text-xs md:text-sm text-neutral-400 whitespace-nowrap ml-1">${time}</p>
                             </div>
-                            <p class="order-status bg-green-200 text-green-600 px-2 py-1 rounded-full text-xs absolute top-4 right-2">${status}</p>
+                            <p class="order-status bg-green-200 text-green-600 px-2 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs absolute top-2 right-2 md:top-4">${status}</p>
                         </li>
                     `;
                     $('#order-item-button').after(orderListItem);
@@ -633,12 +704,12 @@
                                         }
                                         
                                         orderList += `
-                                            <li class="flex relative w-full mb-2 border-b-2 border-dashed border-gray-300 p-3" data-uuid="${elem.uuid}">
+                                            <li class="flex relative w-full mb-2 border-b-2 border-dashed border-gray-300 p-3" data-uuid="${elem.uuid}" data-subtotal="${elem.subtotal}" data-price="${elem.price}">
                                                 <div class="product-image h-20 w-20">
                                                     <img class="h-20 w-20 object-cover rounded-lg" src="${image}">
                                                 </div>
                                                 <div class="product-detail ms-2">
-                                                    <p class="text-base text-gray-700">${productItem.name}</p>
+                                                    <p class="text-base text-gray-700">${elem.product_name || productItem.name}</p>
                                                     <p class="text-sm text-gray-500">Rp. ${addCommas(elem.subtotal)},-</p>
                                                     <p class="text-sm text-gray-500 product-note">${elem.note ? elem.note : '-'}</p>
                                                 </div>
@@ -672,6 +743,10 @@
                             $('.order-form-id').text("Order ID #"+transaction.invoice_number);
                             $('.order-form').removeClass('hidden');
                             $('.standby-form').addClass('hidden');
+                            if ($('.order-container').hasClass('translate-x-full')) {
+                                $('.order-container').removeClass('translate-x-full').addClass('translate-x-0');
+                                $('.open-close-order').addClass('-translate-x-[350px]');
+                            }
                             
                             var product = data.product;
 
@@ -691,12 +766,12 @@
                                         }
                                         
                                         orderList += `
-                                            <li class="flex relative w-full mb-2 border-b-2 border-dashed border-gray-300 p-3" data-uuid="${elem.uuid}">
+                                            <li class="flex relative w-full mb-2 border-b-2 border-dashed border-gray-300 p-3" data-uuid="${elem.uuid}" data-subtotal="${elem.subtotal}" data-price="${elem.price}">
                                                 <div class="product-image h-20 w-20">
                                                     <img class="h-20 w-20 object-cover rounded-lg" src="${image}">
                                                 </div>
                                                 <div class="product-detail ms-2">
-                                                    <p class="text-base text-gray-700">${productItem.name}</p>
+                                                    <p class="text-base text-gray-700">${elem.product_name || productItem.name}</p>
                                                     <p class="text-sm text-gray-500">Rp. ${addCommas(elem.subtotal)},-</p>
                                                     <p class="text-sm text-gray-500 product-note">${elem.note ? elem.note : '-'}</p>
                                                     <button class="rounded-full bg-gray-100 p-1 text-gray-700 cursor-pointer text-sm hover:bg-brand-light hover:text-white edit-product-order"><i class="fas fa-pencil"></i></button>
@@ -1008,55 +1083,94 @@
                 $(this).val(oldVal);
             }
         });
-        //Edit Note Order
+        //Edit Order Item (Nama, Harga, Catatan)
         $('.product-item-list').on('click','.edit-product-order',function() {
-            $('#uuid_order').val('');
-            var orderId = $(this).closest('li').data('uuid');
-            var url = "{{ route('transaction.order.getNote',':id') }}";
-            var ini = this;
-            url = url.replace(':id',orderId);
-            loading();
-            $.ajax({
-                type: "GET",
-                url: url,
-                success: function(data) {
-                    $('#uuid_order').val(orderId);
-                    var note = data.note ? data.note : "";
-                    $('#order_description').val(note);
-                    modal3.toggle();
-                    removeLoading();
-                },
-                error: function(data) {
-                    console.log(data.responseJSON.message);
-                }
-            });
+            var $li    = $(this).closest('li');
+            var orderId = $li.data('uuid');
 
-            $('.tutup-modal-order').on('click',function() {
+            // Reset fields
+            $('#uuid_order').val('');
+            $('#order_product_name').val('');
+            $('#order_price').val('');
+            $('#order_description').val('');
+
+            // Pre-fill dari DOM
+            var currentName  = $li.find('.product-detail p:first-child').text().trim();
+            var currentPrice = parseInt($li.attr('data-price') || 0);
+            var currentNote  = $li.find('.product-note').text().trim();
+            if(currentNote === '-') currentNote = '';
+
+            $('#uuid_order').val(orderId);
+            $('#order_product_name').val(currentName);
+            $('#order_price').val(currentPrice > 0 ? currentPrice : '');
+            $('#order_description').val(currentNote);
+
+            modal3.toggle();
+
+            $('.tutup-modal-order').off('click').on('click',function() {
                 modal3.hide();
             });
         });
+        // Simpan semua perubahan (nama, harga, catatan) dalam satu request
         $('.save-note-button').on('click',function() {
-            var note = $('#order_description').val();
-            var orderID = $('#uuid_order').val();
+            var orderID     = $('#uuid_order').val();
+            var productName = $('#order_product_name').val().trim();
+            var price       = $('#order_price').val();
+            var note        = $('#order_description').val();
+
+            if (!orderID) return;
+
             loading();
-            var url = "{{ route('transaction.order.changeNote',':id') }}";
-            url = url.replace(':id',$('#uuid_order').val());
+
+            // 1. Simpan nama & harga dulu
+            var urlDetail = "{{ route('transaction.order.changeDetail',':id') }}";
+            urlDetail = urlDetail.replace(':id', orderID);
             $.ajax({
                 type: "POST",
-                url: url,
-                data: {'note' : note},
+                url: urlDetail,
+                data: { product_name: productName, price: price },
                 headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
-                success: function(data) {
-                    $('li[data-uuid="'+orderID+'"]').find('.product-note').text(note ? note : '-').promise().then(function() {
-                        modal3.hide();
-                        removeLoading();
+                success: function(detailData) {
+                    // 2. Simpan catatan
+                    var urlNote = "{{ route('transaction.order.changeNote',':id') }}";
+                    urlNote = urlNote.replace(':id', orderID);
+                    $.ajax({
+                        type: "POST",
+                        url: urlNote,
+                        data: { note: note },
+                        headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+                        success: function() {
+                            var $li = $('li[data-uuid="' + orderID + '"]');
+                            var orderItem = detailData.orderItem;
+
+                            // Update DOM langsung
+                            if (productName) {
+                                $li.find('.product-detail p:first-child').text(productName);
+                            }
+                            if (price !== '' && !isNaN(price)) {
+                                $li.find('.product-detail p:nth-child(2)').text('Rp. ' + addCommas(orderItem.subtotal) + ',-');
+                                $li.attr('data-subtotal', orderItem.subtotal);
+                                $li.attr('data-price', orderItem.price);
+                                recalculateCartTotal();
+                            }
+                            $li.find('.product-note').text(note ? note : '-');
+
+                            modal3.hide();
+                            removeLoading();
+                        },
+                        error: function(err) {
+                            console.log(err.responseJSON ? err.responseJSON.message : err);
+                            removeLoading();
+                        }
                     });
                 },
-                error: function(data) {
-                    console.log(data.responseJSON.message);
+                error: function(err) {
+                    console.log(err.responseJSON ? err.responseJSON.message : err);
+                    removeLoading();
                 }
-            })
+            });
         });
+
         //Hapus Orderan
         $('.delete-order-button').on('click',function() {
             var orderID = $('#uuid_order').val();
@@ -1146,7 +1260,7 @@
                 }
             });
 
-            $('.save-name-button').on('click',function() {
+            $('.save-name-button').off('click').on('click',function() {
                 var name = $('#customer_name').val();
                 var idTransaction = $('#transaction-id').val();
                 loading();
@@ -1168,7 +1282,7 @@
                 });
             });
 
-            $('.delete-transaction-button').on('click',function() {
+            $('.delete-transaction-button').off('click').on('click',function() {
                 var idTransaction = $('#transaction-id').val();
                 cConfirm("Warning","Are you sure want to delete this transaction?",function() {
                     loading();
@@ -1192,7 +1306,7 @@
                 });
             });
             
-            $('.tutup-modal-transaction').on('click',function() {
+            $('.tutup-modal-transaction').off('click').on('click',function() {
                 modal2.hide();
             });
         });
@@ -1253,5 +1367,253 @@
                 });
             })
         });
+        // ═══════════════════════════════════════════════════════════════
+        // LIVE UPDATES — AJAX Polling (kompatibel dengan Windows / php artisan serve)
+        // Setiap 3 detik browser request data terbaru dari server.
+        // ═══════════════════════════════════════════════════════════════
+
+        // ── 1. Live status badge di navbar ────────────────────────────────
+        (function() {
+            var badge = '<div id="live-badge" style="'
+                + 'display:inline-flex;align-items:center;gap:6px;'
+                + 'background:#fff;border:1px solid #e5e7eb;border-radius:999px;'
+                + 'padding:5px 13px;font-size:12px;color:#6b7280;'
+                + 'box-shadow:0 1px 4px rgba(0,0,0,.08);margin-left:8px;'
+                + 'user-select:none;flex-shrink:0;">'
+                + '<span id="live-dot" style="width:8px;height:8px;border-radius:50%;'
+                + 'background:#d1d5db;display:inline-block;transition:background .4s,box-shadow .4s;"></span>'
+                + '<span id="live-label" style="transition:color .4s;">Connecting…</span>'
+                + '</div>';
+            $('.navbar-container').append(badge);
+        })();
+
+        function setLiveStatus(status) {
+            var dot   = document.getElementById('live-dot');
+            var label = document.getElementById('live-label');
+            if (!dot || !label) return;
+            if (status === 'live') {
+                dot.style.background  = '#22c55e';
+                dot.style.boxShadow   = '0 0 0 3px rgba(34,197,94,.3)';
+                label.textContent     = '● Live';
+                label.style.color     = '#16a34a';
+            } else if (status === 'offline') {
+                dot.style.background  = '#ef4444';
+                dot.style.boxShadow   = 'none';
+                label.textContent     = '● Offline';
+                label.style.color     = '#dc2626';
+            } else {
+                dot.style.background  = '#f59e0b';
+                dot.style.boxShadow   = '0 0 0 3px rgba(245,158,11,.25)';
+                label.textContent     = '● Connecting…';
+                label.style.color     = '#b45309';
+            }
+        }
+
+        // Helper untuk memainkan suara notifikasi sederhana
+        function playNotificationSound() {
+            try {
+                var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                var oscillator = audioCtx.createOscillator();
+                var gainNode = audioCtx.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                // Suara "ding" sederhana
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+                oscillator.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.1); // A6
+                
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.3);
+            } catch (e) {
+                console.log("Audio not supported or blocked by autoplay policy");
+            }
+        }
+
+        // ── 2. Toast notifikasi ───────────────────────────────────────────
+        function liveToast(msg) {
+            playNotificationSound();
+            
+            var id  = 'lt' + Date.now();
+            var $el = $('<div id="' + id + '">'
+                + '<span style="color:#4ade80;font-size:15px;">⟳</span> ' + msg
+                + '</div>').css({
+                    position:'fixed', bottom:'80px', right:'20px', zIndex:9999,
+                    background:'#1f2937', color:'#f9fafb', borderRadius:'10px',
+                    padding:'10px 16px', fontSize:'13px',
+                    display:'flex', alignItems:'center', gap:'8px',
+                    boxShadow:'0 4px 18px rgba(0,0,0,.35)',
+                    opacity:0, transform:'translateY(8px)',
+                    transition:'opacity .3s, transform .3s'
+                });
+            $('body').append($el);
+            setTimeout(function() { $el.css({ opacity:1, transform:'translateY(0)' }); }, 10);
+            setTimeout(function() {
+                $el.css({ opacity:0, transform:'translateY(8px)' });
+                setTimeout(function() { $el.remove(); }, 350);
+            }, 3500);
+        }
+
+        // ── 3. Kelas badge status transaksi ───────────────────────────────
+        function statusClass(s) {
+            if (s === 'active')  return 'bg-green-200 text-green-600';
+            if (s === 'process') return 'bg-brand-soft text-brand-light';
+            if (s === 'payment') return 'bg-yellow-200 text-yellow-600';
+            return 'bg-gray-200 text-gray-600';
+        }
+
+        // ── 4. Seed UUID yang sudah diketahui dari render awal ────────────
+        var _knownUuids = [];
+        @foreach($transactions as $t)
+            _knownUuids.push('{{ $t->uuid }}');
+        @endforeach
+
+        // ── 5. Sinkronisasi sidebar order dengan data terbaru ─────────────
+        function syncTransactions(incoming) {
+            var activeId    = $('#transaction-id').val();
+            var incomingIds = incoming.map(function(t) { return t.uuid; });
+
+            // Hapus kartu order yang sudah tidak ada di server
+            _knownUuids.forEach(function(uid) {
+                if (incomingIds.indexOf(uid) === -1) {
+                    var $card = $('.order-item.customer[data-uuid="' + uid + '"]');
+                    if ($card.length) {
+                        $card.fadeOut(300, function() { $(this).remove(); });
+                        if (activeId === uid) {
+                            $('#transaction-id').val('');
+                            $('.order-form').addClass('hidden');
+                            $('.standby-form').removeClass('hidden');
+                            liveToast('Order ditutup dari perangkat lain.');
+                        }
+                    }
+                }
+            });
+            _knownUuids = incomingIds;
+
+            // Tambah / update kartu order
+            incoming.forEach(function(trx) {
+                var uid       = trx.uuid;
+                var name      = trx.customer_name || 'Guest';
+                var table     = (trx.table && trx.table.name) ? trx.table.name : 'Unset Table';
+                var orderType = trx.order_type || '';
+                var time      = moment(trx.created_at).format('HH:mm');
+                var badge     = statusClass(trx.status);
+                var $existing = $('.order-item.customer[data-uuid="' + uid + '"]');
+
+                if ($existing.length) {
+                    // Update in-place tanpa reload
+                    $existing.find('.order-name').text(name);
+                    $existing.find('.table-detail-place').text(table);
+                    $existing.find('.order-type-detail').text(orderType);
+                    $existing.find('.order-status')
+                        .text(trx.status)
+                        .attr('class', 'order-status ' + badge
+                            + ' px-2 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs absolute top-2 right-2 md:top-4');
+                } else {
+                    // Kartu baru — insert setelah tombol "Add Order"
+                    var $card = $('<li class="order-item customer border border-gray-400 w-44 md:w-55 h-16 md:h-20'
+                        + ' bg-primary border-primary hover:bg-brand-softer cursor-pointer'
+                        + ' rounded-lg p-2 md:p-3 relative" data-uuid="' + uid + '">'
+                        + '<p class="order-name text-sm md:text-lg text-neutral-700 mb-1 md:mb-2 font-medium truncate pr-14">' + name + '</p>'
+                        + '<div class="flex order-subdetail justify-between">'
+                        +   '<p class="table-detail text-xs md:text-sm text-neutral-400 truncate">'
+                        +     '<span class="table-detail-place">' + table + '</span>'
+                        +     ' - <span class="order-type-detail">' + orderType + '</span>'
+                        +   '</p>'
+                        +   '<p class="time-detail text-xs md:text-sm text-neutral-400 whitespace-nowrap ml-1">' + time + '</p>'
+                        + '</div>'
+                        + '<p class="order-status ' + badge
+                        +   ' px-2 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs absolute top-2 right-2 md:top-4">'
+                        + trx.status + '</p>'
+                        + '</li>');
+                    $('#order-item-button').after($card);
+                    liveToast('Order baru masuk: ' + name);
+                }
+            });
+        }
+
+        // ── 6. Polling AJAX setiap 3 detik ───────────────────────────────
+        var _pollUrl       = '{{ route("transaction.live-updates") }}';
+        var _pollActive    = true;
+        var _pollFailCount = 0;
+
+        function doPoll() {
+            if (!_pollActive) return;
+
+            $.ajax({
+                type: 'GET',
+                url: _pollUrl,
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+                success: function(data) {
+                    _pollFailCount = 0;
+                    setLiveStatus('live');
+                    if (data.success && Array.isArray(data.transactions)) {
+                        syncTransactions(data.transactions);
+                    }
+                },
+                error: function() {
+                    _pollFailCount++;
+                    setLiveStatus(_pollFailCount >= 2 ? 'offline' : 'connecting');
+                }
+            });
+        }
+
+        // Mulai polling pertama kali
+        doPoll();
+        // Polling berikutnya setiap 3 detik
+        var _pollTimer = setInterval(doPoll, 3000);
+
+        // Hentikan polling saat tab ditutup
+        window.addEventListener('beforeunload', function() {
+            _pollActive = false;
+            clearInterval(_pollTimer);
+        });
+
+        // ── 7. Fullscreen Image Viewer ──────────────────────────────────
+        $('.picture_product').on('click', function() {
+            var src = $(this).attr('src');
+            if (src && src.trim() !== '') {
+                $('#fullscreen-image-element').attr('src', src);
+                $('#modal-fullscreen-image').removeClass('hidden');
+                setTimeout(function() {
+                    $('#modal-fullscreen-image').removeClass('opacity-0').addClass('opacity-100');
+                }, 10);
+            }
+        });
+
+        function closeFullscreenImage() {
+            $('#modal-fullscreen-image').removeClass('opacity-100').addClass('opacity-0');
+            setTimeout(function() {
+                $('#modal-fullscreen-image').addClass('hidden');
+                $('#fullscreen-image-element').attr('src', '');
+            }, 300);
+        }
+
+        $('#close-fullscreen-image, #modal-fullscreen-image').on('click', function(e) {
+            // Close only if click is on background or close button (not on the image itself)
+            if (e.target.id === 'modal-fullscreen-image' || e.target.id === 'close-fullscreen-image' || $(e.target).closest('#close-fullscreen-image').length > 0) {
+                closeFullscreenImage();
+            }
+        });
+
+        // Also close when clicking the zoomed image itself (intuitive gesture)
+        $('#fullscreen-image-element').on('click', function() {
+            closeFullscreenImage();
+        });
+
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && !$('#modal-fullscreen-image').hasClass('hidden')) {
+                closeFullscreenImage();
+            }
+        });
+
+        // ═══════════════════════════════════════════════════════════════
+        // END LIVE UPDATES
+        // ═══════════════════════════════════════════════════════════════
     </script>
 @endsection
+

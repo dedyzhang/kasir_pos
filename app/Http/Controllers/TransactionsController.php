@@ -172,6 +172,30 @@ class TransactionsController extends Controller
         return response()->json(['success' => true]);
     }
     /**
+     * Change product name and/or price on an order item.
+     * Subtotal is recalculated from new price × current qty.
+     */
+    public function changeOrderDetail(String $uuid, Request $request) {
+        $orderItem = TransactionDetails::findOrFail($uuid);
+
+        if ($request->has('product_name') && $request->product_name !== '') {
+            $orderItem->product_name = $request->product_name;
+        }
+
+        if ($request->has('price') && is_numeric($request->price) && $request->price >= 0) {
+            $newPrice    = (int) $request->price;
+            $orderItem->price    = $newPrice;
+            $orderItem->subtotal = $newPrice * $orderItem->qty;
+        }
+
+        $orderItem->save();
+
+        return response()->json([
+            'success'   => true,
+            'orderItem' => $orderItem,
+        ]);
+    }
+    /**
      * Delete Order per transaction
      */
     public function deleteOrder(String $uuid) {
@@ -487,4 +511,24 @@ class TransactionsController extends Controller
 
     //         return "Receipt printed successfully.";
     // }
+
+    /**
+     * Live Updates polling endpoint.
+     * Returns the current list of active/process transactions as JSON.
+     * Frontend polls this every 3 seconds via setInterval — no SSE needed,
+     * works on Windows with single-threaded php artisan serve.
+     */
+    public function getLiveUpdates(Request $request)
+    {
+        $transactions = Transactions::with(['table', 'orderItem'])
+            ->whereIn('status', ['active', 'process', 'payment'])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return response()->json([
+            'success'      => true,
+            'time'         => now()->toIso8601String(),
+            'transactions' => $transactions,
+        ]);
+    }
 }
