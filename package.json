@@ -5,14 +5,15 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "startnetwork": "concurrently \"npm run dev -- --host\" \"php artisan serve --host=0.0.0.0 --port=8000\" ",
-        "start": "concurrently \"npm run dev\" \"php artisan serve\" "
+        "start": "concurrently \"npm run dev\" \"php artisan serve\" ",
+        "startnetwork": "concurrently \"npm run dev -- --host\" \"php artisan serve --host=0.0.0.0 --port=8000\" "
     },
     "devDependencies": {
         "@fortawesome/fontawesome-free": "^7.1.0",
         "@tailwindcss/vite": "^4.1.18",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
+        "cross-env": "^10.1.0",
         "laravel-vite-plugin": "^2.0.0",
         "tailwindcss": "^4.1.18",
         "vite": "^7.0.7"

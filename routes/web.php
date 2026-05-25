@@ -21,7 +21,8 @@ Route::middleware('auth')->controller(LoginController::class)->group(function() 
     Route::get('/dashboard', 'index')->name('auth.index');
 });
 
-Route::resource('products',ProductsController::class)->middleware(IsAdmin::class); 
+Route::resource('products',ProductsController::class)->middleware(IsAdmin::class)->except('show');
+Route::resource('products',ProductsController::class)->middleware('auth')->only('show'); 
 Route::middleware(IsAdmin::class)->controller(ProductsController::class)->group(function() {
     Route::post('/{uuid}/active','activeToggle')->name('products.active');
 });
@@ -36,6 +37,7 @@ Route::middleware(IsAdmin::class)->controller(SettingsController::class)->group(
     Route::post('/settings/restaurant/update','restaurantUpdate')->name('settings.restaurant.update');
 });
 Route::middleware('auth')->controller(TransactionsController::class)->group(function(){
+    Route::get('/transaction/live-updates','getLiveUpdates')->name('transaction.live-updates');
     Route::post('/transaction/create','create')->name('transaction.create');
     Route::get('/transaction/{uuid}/show','show')->name('transaction.show');
     Route::delete('/transaction/{uuid}/delete','delete')->name('transaction.delete');
@@ -49,6 +51,7 @@ Route::middleware('auth')->controller(TransactionsController::class)->group(func
     Route::post('/transaction/order/{uuid}/changeName','changeNameOrder')->name('transaction.order.changeName');
     Route::get('/transaction/order/{uuid}/getNote','getNoteOrder')->name('transaction.order.getNote');
     Route::post('/transaction/order/{uuid}/changeNote','changeNoteOrder')->name('transaction.order.changeNote');
+    Route::post('/transaction/order/{uuid}/changeDetail','changeOrderDetail')->name('transaction.order.changeDetail');
     Route::delete('/transaction/order/{uuid}/deleteOrder','deleteOrder')->name('transaction.order.delete');
     Route::post('/transaction/{uuid}/submit','submitTransaction')->name('transaction.submit');
     Route::get('/transaction/{uuid}/payment','paymentTransaction')->name('transaction.payment');
