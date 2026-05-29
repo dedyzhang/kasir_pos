@@ -44,11 +44,20 @@
                     </div>
                 @enderror      
 
-                <div class="flex items-center mt-6 w-full @error('password') border border-red-500 @else bg-transparent border border-gray-300/60 @enderror  h-12 rounded-full overflow-hidden pl-6 gap-3">
-                    <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <div class="flex items-center mt-6 w-full @error('password') border border-red-500 @else bg-transparent border border-gray-300/60 @enderror h-12 rounded-full overflow-hidden pl-6 pr-12 gap-3 relative">
+                    <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0">
                         <path d="M13 8.5c0-.938-.729-1.7-1.625-1.7h-.812V4.25C10.563 1.907 8.74 0 6.5 0S2.438 1.907 2.438 4.25V6.8h-.813C.729 6.8 0 7.562 0 8.5v6.8c0 .938.729 1.7 1.625 1.7h9.75c.896 0 1.625-.762 1.625-1.7zM4.063 4.25c0-1.406 1.093-2.55 2.437-2.55s2.438 1.144 2.438 2.55V6.8H4.061z" fill="@error('password') #F54927 @else #6B7280 @endif"/>
                     </svg>
-                    <input type="password" placeholder="Password" class="bg-transparent @error('password') text-red-700 placeholder-red-300 @else text-gray-500/80 placeholder-gray-500/80 @enderror border-0 text-sm w-full h-full outline-none focus:outline-none focus:border-0" name="password">
+                    <input type="password" id="password" placeholder="Password" class="bg-transparent @error('password') text-red-700 placeholder-red-300 @else text-gray-500/80 placeholder-gray-500/80 @enderror border-0 text-sm w-full h-full outline-none focus:outline-none focus:border-0" name="password">
+                    <button type="button" id="btn-toggle-login-password" class="absolute inset-y-0 right-0 pr-6 flex items-center text-gray-400 hover:text-indigo-500 transition-all cursor-pointer border-none outline-none select-none">
+                        <svg class="w-5 h-5 icon-eye" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 icon-eye-slash hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>
+                        </svg>
+                    </button>
                 </div>
                 @error('password')
                     <div class="flex items-center justify-start w-full mt-1 ps-3 gap-2">
@@ -69,5 +78,28 @@
             </form>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnToggle = document.getElementById('btn-toggle-login-password');
+            const passwordInput = document.getElementById('password');
+            
+            if (btnToggle && passwordInput) {
+                btnToggle.addEventListener('click', function() {
+                    const iconEye = btnToggle.querySelector('.icon-eye');
+                    const iconEyeSlash = btnToggle.querySelector('.icon-eye-slash');
+                    
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        iconEye.classList.add('hidden');
+                        iconEyeSlash.classList.remove('hidden');
+                    } else {
+                        passwordInput.type = 'password';
+                        iconEye.classList.remove('hidden');
+                        iconEyeSlash.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -13,10 +13,14 @@
 @endsection
 
 @section('container')
+    <!-- Cropper.js CDN Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
     
     <form action="{{route('products.update',$product->uuid)}}" method="POST" class="p-6" enctype="multipart/form-data">
         @method('put')
         @csrf
+        <input type="hidden" name="cropped_image_data" id="cropped_image_data" />
         <div class="container-place w-full sm:w-[80%] grid grid-cols-1 gap-2 bg-white rounded-lg p-6">
             <div class="col-span-1">
                 <label for="name" class="text-sm font-medium text-gray-700 mb-1 block">Nama Produk</label>
@@ -103,26 +107,69 @@
             </div>
             
             <div class="col-span-1 mt-5">
-                <button type="submit" class="w-full bg-brand-light hover:bg-brand-strong text-white font-medium py-2 px-4 cursor-pointer rounded-base w-full sm:w-auto"><i class="fas fa-pencil"></i> Edit Products</button>
+                <button type="submit" class="w-full bg-brand hover:bg-brand-strong text-white font-medium py-2.5 px-6 cursor-pointer rounded-base w-full sm:w-auto transition-all shadow-md shadow-brand/20"><i class="fas fa-pencil"></i> Edit Product</button>
+            </div>
+        </div>
+
+        <!-- HTML Modal Cropper -->
+        <div id="cropperModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-gray-900/60 backdrop-blur-xs p-4">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-xl overflow-hidden transform transition-all duration-300 scale-95 opacity-100 flex flex-col">
+                <!-- Header -->
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-gray-800">Crop Product Picture</h3>
+                    <button type="button" class="close-cropper text-gray-400 hover:text-gray-600 text-2xl cursor-pointer outline-0">&times;</button>
+                </div>
+                <!-- Body -->
+                <div class="p-6 flex flex-col items-center justify-center bg-gray-50/50 flex-1">
+                    <div class="w-full max-h-[350px] overflow-hidden rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200">
+                        <img id="cropperImage" class="max-w-full max-h-[300px] block" src="" alt="To Crop" />
+                    </div>
+                    <div class="mt-4 flex gap-2 flex-wrap justify-center">
+                        <button type="button" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-xs font-semibold cursor-pointer border border-gray-300 transition-all" id="rotate-left"><i class="fas fa-rotate-left mr-1"></i> Rotate Left</button>
+                        <button type="button" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-xs font-semibold cursor-pointer border border-gray-300 transition-all" id="rotate-right"><i class="fas fa-rotate-right mr-1"></i> Rotate Right</button>
+                        <button type="button" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-xs font-semibold cursor-pointer border border-gray-300 transition-all" id="reset-crop"><i class="fas fa-arrows-rotate mr-1"></i> Reset</button>
+                    </div>
+                </div>
+                <!-- Footer -->
+                <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 bg-gray-50/20">
+                    <button type="button" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-sm font-semibold cursor-pointer transition-all close-cropper">Cancel</button>
+                    <button type="button" class="px-5 py-2.5 bg-brand hover:bg-brand-strong text-white rounded-lg text-sm font-semibold shadow-md shadow-brand/20 transition-all cursor-pointer" id="save-crop">Crop & Apply</button>
+                </div>
             </div>
         </div>
         
     </form>
     <script type="module">
-        function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
+        let cropper = null;
 
-                reader.onload = function (e) {
-                    $('#image-preview').attr('src', e.target.result);
-                }
-
-                reader.readAsDataURL(input.files[0]);
+        function initCropper(imageSrc) {
+            $('#cropperImage').attr('src', imageSrc);
+            $('#cropperModal').removeClass('hidden');
+            
+            const image = document.getElementById('cropperImage');
+            if (cropper) {
+                cropper.destroy();
             }
+            
+            cropper = new Cropper(image, {
+                aspectRatio: 1, // Force square crop
+                viewMode: 1,
+                autoCropArea: 0.8,
+                responsive: true,
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: false,
+                cropBoxMovable: true,
+                cropBoxResizable: true,
+                toggleDragModeOnDblclick: false
+            });
         }
 
         $('#picture').change(function() {
             var file = this.files[0];
+            if (!file) return;
+
             var filename = file.name;
             var filesize = file.size;
             const maxSizeInBytes = 2097152;
@@ -131,24 +178,77 @@
 
             if($.inArray(ext,allow_ext) == -1) {
                 oAlert("red","Warning","File Must Be JPG, JPEG and PNG");
+                $(this).val("");
                 return false;
             }
             if(filesize > maxSizeInBytes) {
                 oAlert("red","Warning","File size must below 2MB");
+                $(this).val("");
                 return false;
             }
 
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                initCropper(e.target.result);
+            }
+            reader.readAsDataURL(file);
+        });
 
-            readURL(this);
+        // Cropper Actions
+        $('#rotate-left').on('click', function() {
+            if (cropper) cropper.rotate(-90);
+        });
 
-            $(this).closest('.uploaded-place').addClass('hidden');
-            $('.preview-place').removeClass('hidden');
+        $('#rotate-right').on('click', function() {
+            if (cropper) cropper.rotate(90);
+        });
+
+        $('#reset-crop').on('click', function() {
+            if (cropper) cropper.reset();
+        });
+
+        $('#save-crop').on('click', function() {
+            if (cropper) {
+                var canvas = cropper.getCroppedCanvas({
+                    width: 600,
+                    height: 600
+                });
+                var croppedDataUrl = canvas.toDataURL('image/png');
+                
+                // Set hidden input data
+                $('#cropped_image_data').val(croppedDataUrl);
+                
+                // Set preview
+                $('#image-preview').attr('src', croppedDataUrl);
+                
+                // Hide input, show preview container
+                $('#picture').closest('.uploaded-place').addClass('hidden');
+                $('.preview-place').removeClass('hidden');
+                
+                // We are uploading/saving a new cropped image, so reset is_deleted to 0
+                $('#is_deleted').val("0");
+                
+                // Cleanup
+                $('#cropperModal').addClass('hidden');
+                cropper.destroy();
+                cropper = null;
+            }
+        });
+
+        $('.close-cropper').on('click', function() {
+            $('#picture').val("");
+            $('#cropperModal').addClass('hidden');
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
         });
 
         $('.preview-place').on('click','.delete-image',function(){
             $('#is_deleted').val("1");
             $('#image-preview').attr('src','');
             $('#picture').val("");
+            $('#cropped_image_data').val("");
             $('#picture').closest('.uploaded-place').removeClass('hidden');
             $('.preview-place').addClass('hidden');
         });

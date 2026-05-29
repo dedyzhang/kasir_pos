@@ -74,7 +74,7 @@
                     </div>
                     
                     <div class="flex items-start gap-2 flex-col">
-                        <input type="number" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter discount Amount" value="{{ $transaction->discount }}">
+                        <input type="number" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand" placeholder="Enter discount Amount" value="{{ $transaction->discount }}">
                         <button class="px-4 py-3 bg-brand-light text-white rounded-lg apply-discount">Apply Discount</button>
                     </div>
                 </div>
@@ -150,6 +150,28 @@
                 <label for="jumlah_yang_dibayar" class="text-lg font-bold mt-5">Change</label>
                 <p class="text-lg font-bold mt-2 change-form">Rp {{ $change }}</p>
 
+                <!-- Bluetooth Connection Panel -->
+                <div class="p-4 bg-white border border-gray-200 rounded-xl mt-4 flex flex-col gap-3 text-xs shadow-sm">
+                    <div class="flex items-center justify-between flex-wrap gap-2 border-b border-gray-100 pb-2">
+                        <span class="font-bold text-gray-700 uppercase tracking-wider text-[10px]">Bluetooth Printer</span>
+                        <span id="bt-device-name" class="font-semibold text-emerald-600 hidden truncate max-w-[130px]"></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="btn-toggle-bluetooth" class="px-3 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-lg flex items-center gap-1.5 transition-all cursor-pointer shadow-sm w-full justify-center text-[11px] outline-none">
+                            <i class="fab fa-bluetooth text-[11px]"></i> <span id="bt-status-text">Hubungkan Bluetooth</span>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center justify-between gap-1.5 pt-1">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Metode Cetak:</label>
+                        <select id="print-method-select" class="px-2 py-1 bg-white border border-brand rounded-lg text-[11px] font-bold focus:outline-none cursor-pointer">
+                            <option value="browser" selected>Browser Print (HTML)</option>
+                            <option value="bluetooth">Direct Bluetooth</option>
+                            <option value="rawbt">RawBT (Android)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <button type="button" class="bg-fg-success text-white py-2 px-4 rounded-base hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-success cursor-pointer mt-4" id="print-check-receipt">Print Check Receipt</button>
                 <button type="button" class="bg-brand text-white py-2 px-4 rounded-base hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-brand cursor-pointer mt-2" id="process-payment">Process Payment</button>
             </div>
@@ -159,7 +181,7 @@
     <div id="modal-payment-success" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full max-h-full z-99">
         <div class="relative p-4 w-full max-w-xl max-h-[90%]">
             <!-- Modal content -->
-            <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+            <div class="relative bg-white rounded-lg shadow-sm">
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-3 md:p-3 rounded-t text-start sm:text-center">
                     <h3 class="text-lg font-semibold text-dark-soft w-full">
@@ -307,7 +329,7 @@
         const options = {
             placement: "center",
             backdrop: "dynamic",
-            backdropClasses: "bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40",
+            backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
             closable: true,
         };
         const modal = new Modal($targetEl,options);
@@ -363,101 +385,80 @@
             const change = paidAmount - totalAmount;
             $('.payment-methods-detail .change-form').text('Rp ' + addCommas(change));
          });
-         $('#print-check-receipt').on('click',function() {
-            loading();
-            $('#printreceiptcheck-withprice').attr('src','about:blank');
-            $('#receipt-meja').text('');
-            $('#receipt-invoice-number').text('');
-            $('#receipt-customer-name').text('');
-            $('#receipt-order-type').text('');
-            $('#receipt-date').text('');
-            $('#receipt-subtotal').text('');
-            $('#receipt-tax').text('');
-            $('#receipt-discount').text('');
-            $('#receipt-total').text('');
-            $('#receipt-items').empty();
-            var url = "{{ route('transaction.print.check',':id') }}";
-            url = url.replace(':id','{{ $transaction->uuid }}');
-            $.ajax({
-                method: 'GET',
-                url: url,
-                success: function(data) {
-                    if(data.success == true) {
-                        var transaction = data.transaction;
-                        var discount = transaction.discount ? transaction.discount : 0;
-                        var tax = transaction.tax ? transaction.tax : 0;
-                        $('#receipt-meja').text(transaction.table && transaction.table.name ? transaction.table.name : '');
-                        $('#receipt-invoice-number').text(transaction.invoice_number);
-                        $('#receipt-customer-name').text(transaction.customer_name || 'Guest');
-                        $('#receipt-order-type').text(transaction.order_type ? transaction.order_type.replace('_',' ').toUpperCase() : '');
-                        $('#receipt-date').text(moment(transaction.created_at).format('DD-MM-YY HH:mm:ss') || '{{ date('Y-m-d H:i:s') }}');
-                        $('#receipt-subtotal').text("Rp."+addCommas(transaction.subtotal));
-                        $('#receipt-tax').text("Rp."+addCommas(tax));
-                        $('#receipt-discount').text("Rp."+addCommas(discount));
-                        $('#receipt-total').text("Rp."+addCommas(transaction.total));
-                        $('#receipt-items').empty();
-                        var product = data.transaction.order_item;
-                        var productList = "";
-                        if(transaction.order_item.length > 0) {
-                            transaction.order_item.forEach(elem => {
-                                var item = `
-                                    <p style="margin:0;padding:0;font-size:15px;margin-top:-5px" class="print-receipt">${elem.product_name || ''}</p>
-                                    <div style="margin:0; margin-top: -15px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
-                                        <p class="item-note" style="font-style: italic">* Note: ${elem.note ? elem.note : '-'}</p>
-                                    </div>
-                                    <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
-                                        <p class="item-note" style="font-style: italic">${elem.qty} x ${"Rp."+addCommas(elem.price)}</p>
-                                        <p class="item-qty" style="margin-right:5px; font-size: 13px; font-weight:bold; align-self: flex-end">${"Rp."+addCommas(elem.subtotal)}</p>
-                                    </div>
-                                `;
-                                productList += item;
-                            });
-                            $('#receipt-items').html(productList);
-                        }
-                        var divContents = $("#printreceiptcheck").html();
-                        // var printWindow = window.open('', '', 'height=400,width=384');
-                        // printWindow.document.write('<html><head><title>DIV Contents</title>');
-                        // printWindow.document.write('</head><body >');
-                        // printWindow.document.write(divContents);
-                        // printWindow.document.write('</body></html>');
-                        // printWindow.print();
-                        var w = window.open('','printreceiptcheck');
-                        w.document.write(divContents);
-                        const iframe = document.getElementById('printreceiptcheck-withprice');
-                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          // Bluetooth — auto-reconnect saat halaman dimuat
+          initBluetoothUI();
 
-                        // 1. Create a style element
-                        const style = iframeDoc.createElement('style');
-                        style.type = 'text/css';
+          // Bluetooth Printer Toggler in Payment Page
+          $('#btn-toggle-bluetooth').on('click', async function() {
+              if (window.bluetoothPrinterInstance.isConnected()) {
+                  window.bluetoothPrinterInstance.disconnect();
+                  if (window._setBtUI) window._setBtUI(false);
+                  oAlert('orange', 'Disconnected', 'Printer Bluetooth terputus.');
+              } else {
+                  loading();
+                  try {
+                      await window.bluetoothPrinterInstance.connect();
+                      const deviceName = window.bluetoothPrinterInstance.device.name || 'BT Printer';
+                      if (window._setBtUI) window._setBtUI(true, deviceName);
+                      removeLoading();
+                      oAlert('green', 'Connected', `Terhubung ke ${deviceName}`);
+                  } catch (e) {
+                      removeLoading();
+                      oAlert('red', 'Error', 'Gagal menghubungkan printer bluetooth atau dibatalkan.');
+                  }
+              }
+          });
 
-                        // 2. Define print-only font rules
-                        const css = `
-                        @page { margin: 0; }
-                        @media print {
-                            body, * {
-                            font-family: "Cutive Mono", monospace !important;
-                            }
-                        }
-                        `;
-
-                        // 3. Inject the style into the iframe
-                        if (style.styleSheet) {
-                            style.styleSheet.cssText = css; // Support for older IE
-                        } else {
-                            style.appendChild(iframeDoc.createTextNode(css));
-                        }
-                        iframeDoc.head.appendChild(style);
-                        w.print();
-                        w.close();
-
-                        removeLoading();
-                    }
-                },
-                error: function(data) {
-                    console.log(data.responseJSON.message);
-                }
-            });
-         })
+          // Print Check Receipt (Before checkout payment)
+          $('#print-check-receipt').on('click', function() {
+              loading();
+              var url = "{{ route('transaction.print.check', ':id') }}";
+              url = url.replace(':id', '{{ $transaction->uuid }}');
+              
+              $.ajax({
+                  method: 'GET',
+                  url: url,
+                  success: async function(data) {
+                      removeLoading();
+                      if(data.success == true) {
+                          const method = $('#print-method-select').val();
+                          
+                          if (method === 'bluetooth') {
+                              if (!window.bluetoothPrinterInstance.isConnected()) {
+                                  oAlert('orange', 'Warning', 'Printer Bluetooth belum terhubung. Silakan hubungkan terlebih dahulu.');
+                                  return;
+                              }
+                              try {
+                                  loading();
+                                  const bytes = buildEscPosReceipt(data);
+                                  await window.bluetoothPrinterInstance.print(bytes);
+                                  removeLoading();
+                                  oAlert('green', 'Printed', 'Struk berhasil dicetak via Bluetooth.');
+                              } catch (e) {
+                                  removeLoading();
+                                  oAlert('red', 'Error', 'Gagal mengirim data ke printer Bluetooth.');
+                              }
+                          } else if (method === 'rawbt') {
+                              try {
+                                  const bytes = buildEscPosReceipt(data);
+                                  window.printViaRawBT(bytes);
+                                  oAlert('green', 'Success', 'Struk dikirim ke RawBT.');
+                              } catch (e) {
+                                  oAlert('red', 'Error', 'Gagal memicu RawBT.');
+                              }
+                          } else {
+                              printHtmlReceipt(data);
+                          }
+                      } else {
+                          oAlert('red', 'Error', 'Gagal memuat data tagihan.');
+                      }
+                  },
+                  error: function(data) {
+                      removeLoading();
+                      oAlert('red', 'Error', 'Gagal menghubungi server untuk mengambil data struk.');
+                  }
+              });
+          });
          $('#process-payment').on('click',function() {
             var payment_method = $("input[name='payment_method']:checked").val();
             var payment_ammount = $('input[name="jumlah_yang_dibayar"]').val();
@@ -510,102 +511,287 @@
             }
 
          });
-         $('.print-final-receipt').on('click',function() {
-            loading();
-            $('#printreceiptpayment-check').attr('src','about:blank');
-            $('#payment-invoice-number').text('');
-            $('#payment-customer-name').text('');
-            $('#payment-order-type').text('');
-            $('#payment-date').text('');
-            $('#payment-subtotal').text('');
-            $('#payment-tax').text('');
-            $('#payment-discount').text('');
-            $('#payment-total').text('');
-            $('#payment-items').empty();
-            var url = "{{ route('transaction.print.payment',':id') }}";
-            url = url.replace(':id','{{ $transaction->uuid }}');
-            $.ajax({
-                method: 'GET',
-                url: url,
-                success: function(data) {
-                    if(data.success == true) {
-                        removeLoading();
-                        var transaction = data.transaction;
-                        var discount = transaction.discount ? transaction.discount : 0;
-                        var tax = transaction.tax ? transaction.tax : 0;
-                        var paid = transaction.total_paid ? transaction.total_paid : 0;
-                        $('#payment-invoice-number').text(transaction.invoice_number);
-                        $('#payment-customer-name').text(transaction.customer_name || 'Guest');
-                        $('#payment-order-type').text(transaction.order_type ? transaction.order_type.replace('_',' ').toUpperCase() : '');
-                        $('#payment-date').text(moment(transaction.paid_at).format('DD-MM-YY HH:mm:ss'));
-                        $('#payment-table').text(transaction.table && transaction.table.name ? transaction.table.name : '-');
-                        $('#payment-kasir').text(data.user);
-                        $('#payment-subtotal').text("Rp."+addCommas(transaction.subtotal));
-                        $('#payment-tax').text("Rp."+addCommas(tax));
-                        $('#payment-discount').text("Rp."+addCommas(discount));
-                        $('#payment-total').text("Rp."+addCommas(transaction.total));
-                        $('#payment-paid').text("Rp."+addCommas(paid));
-                        $('#payment-change').text("Rp."+addCommas(parseFloat(paid) - parseFloat(transaction.total)));
-                        $('#payment-items').empty();
-                        var product = data.transaction.order_item;
-                        var productList = "";
-                        if(transaction.order_item.length > 0) {
-                            transaction.order_item.forEach(elem => {
-                                var item = `
-                                    <p style="margin:0;padding:0;font-size:15px;margin-top:-5px" class="print-receipt">${elem.product_name || ''}</p>
-                                    <div style="margin:0; margin-top: -15px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
-                                        <p class="item-note" style="font-style: italic">* Note: ${elem.note ? elem.note : '-'}</p>
-                                    </div>
-                                    <div style="margin:0; margin-top: -25px; padding: 0; font-size: 13px; display: flex; justify-content: space-between; " class="print-receipt">
-                                        <p class="item-note" style="font-style: italic">${elem.qty} x ${"Rp."+addCommas(elem.price)}</p>
-                                        <p class="item-qty" style="margin-right:5px; font-size: 13px; font-weight:bold; align-self: flex-end">${"Rp."+addCommas(elem.subtotal)}</p>
-                                    </div>
-                                `;
-                                productList += item;
-                            });
-                            $('#payment-items').html(productList);
-                        }
-                        var divContents = $("#printreceiptpayment").html();
-                        // var printWindow = window.open('', '', 'height=400,width=384');
-                        // printWindow.document.write('<html><head><title>DIV Contents</title>');
-                        // printWindow.document.write('</head><body >');
-                        // printWindow.document.write(divContents);
-                        // printWindow.document.write('</body></html>');
-                        // printWindow.print();
-                        var w = window.open('','printreceiptpayment');
-                        w.document.write(divContents);
-                        const iframepayment = document.getElementById('printreceiptpayment-check');
-                        const iframeDocpayment = iframepayment.contentDocument || iframepayment.contentWindow.document;
+          $('.print-final-receipt').on('click', function() {
+              loading();
+              var url = "{{ route('transaction.print.payment', ':id') }}";
+              url = url.replace(':id', '{{ $transaction->uuid }}');
+              
+              $.ajax({
+                  method: 'GET',
+                  url: url,
+                  success: async function(data) {
+                      removeLoading();
+                      if(data.success == true) {
+                          const method = $('#print-method-select').val();
+                          
+                          if (method === 'bluetooth') {
+                              if (!window.bluetoothPrinterInstance.isConnected()) {
+                                  oAlert('orange', 'Warning', 'Printer Bluetooth belum terhubung. Silakan hubungkan terlebih dahulu.');
+                                  return;
+                              }
+                              try {
+                                  loading();
+                                  const bytes = buildEscPosReceipt(data);
+                                  await window.bluetoothPrinterInstance.print(bytes);
+                                  removeLoading();
+                                  oAlert('green', 'Printed', 'Struk berhasil dicetak via Bluetooth.');
+                              } catch (e) {
+                                  removeLoading();
+                                  oAlert('red', 'Error', 'Gagal mengirim data ke printer Bluetooth.');
+                              }
+                          } else if (method === 'rawbt') {
+                              try {
+                                  const bytes = buildEscPosReceipt(data);
+                                  window.printViaRawBT(bytes);
+                                  oAlert('green', 'Success', 'Struk dikirim ke RawBT.');
+                              } catch (e) {
+                                  oAlert('red', 'Error', 'Gagal memicu RawBT.');
+                              }
+                          } else {
+                              printHtmlReceipt(data);
+                          }
+                      } else {
+                          oAlert('red', 'Error', 'Gagal memuat data struk pembayaran.');
+                      }
+                  },
+                  error: function(data) {
+                      removeLoading();
+                      oAlert('red', 'Error', 'Gagal menghubungi server untuk mengambil data struk.');
+                  }
+              });
+          });
 
-                        // 1. Create a style element
-                        const style = iframeDocpayment.createElement('style');
-                        style.type = 'text/css';
+          // Helper: Convert transaction data to ESC/POS binary bytes
+          function buildEscPosReceipt(data, noPrice = false) {
+              const tx = data.transaction;
+              const items = tx.order_item || [];
+              const res = data.restaurant || {};
+              const cashier = data.user || 'Kasir';
 
-                        // 2. Define print-only font rules
-                        const css = `
-                        @page { margin: 0; }
-                        @media print {
-                            body, * {
-                            font-family: "Cutive Mono", monospace !important;
-                            }
-                        }
-                        `;
+              const encoder = new window.EscPosEncoder();
+              encoder.initialize();
 
-                        // 3. Inject the style into the iframe
-                        if (style.styleSheet) {
-                            style.styleSheet.cssText = css; // Support for older IE
-                        } else {
-                            style.appendChild(iframeDocpayment.createTextNode(css));
-                        }
-                        iframeDocpayment.head.appendChild(style);
-                        w.print();
-                        w.close();
-                    }
-                },
-                error: function(data) {
-                    console.log(data.responseJSON.message);
-                }
-            });
-         });
+              // Header
+              encoder.alignCenter();
+              encoder.bold(true);
+              encoder.doubleSize(true);
+              if (noPrice) {
+                  encoder.line('KITCHEN CHECK');
+              } else {
+                  encoder.line(res.name || 'POS KASIR');
+              }
+              encoder.doubleSize(false);
+              encoder.bold(false);
+              
+              if (!noPrice && res.location) {
+                  encoder.line(res.location);
+              }
+              encoder.line('================================');
+
+              // Invoice details
+              encoder.alignLeft();
+              encoder.line(`Tanggal: ${moment(tx.paid_at || tx.created_at).format('DD/MM/YYYY HH:mm')}`);
+              encoder.line(`Invoice: #${tx.invoice_number}`);
+              encoder.line(`Meja   : ${tx.table ? 'Meja ' + tx.table.nomor_meja : 'Take Away'}`);
+              encoder.line(`Kasir  : ${cashier}`);
+              encoder.line('--------------------------------');
+
+              // Sales Items
+              items.forEach(elem => {
+                  encoder.bold(true);
+                  encoder.line(elem.product_name || 'Item');
+                  encoder.bold(false);
+
+                  if (elem.note) {
+                      encoder.line(` * Note: ${elem.note}`);
+                  }
+
+                  if (noPrice) {
+                      encoder.line(`Qty: ${elem.qty}`);
+                  } else {
+                      const qtyPrice = `${elem.qty} x Rp ${addCommas(elem.price || (elem.subtotal/elem.qty))}`;
+                      const itemTotal = `Rp ${addCommas(elem.subtotal)}`;
+                      encoder.twoColumnRow(qtyPrice, itemTotal);
+                  }
+              });
+
+              encoder.line('--------------------------------');
+
+              if (!noPrice) {
+                  const subtotalStr = `Rp ${addCommas(tx.subtotal || tx.total)}`;
+                  const taxStr = `Rp ${addCommas(tx.tax || 0)}`;
+                  const discStr = `Rp ${addCommas(tx.discount || 0)}`;
+                  const totalStr = `Rp ${addCommas(tx.total)}`;
+                  const paidStr = `Rp ${addCommas(tx.total_paid || 0)}`;
+                  const changed = tx.total_paid > 0 ? (tx.total_paid - tx.total) : 0;
+                  const changedStr = `Rp ${addCommas(changed)}`;
+
+                  encoder.twoColumnRow('Subtotal', subtotalStr);
+                  encoder.twoColumnRow('Pajak (10%)', taxStr);
+                  if (tx.discount > 0) {
+                      encoder.twoColumnRow('Diskon', '-' + discStr);
+                  }
+                  encoder.line('--------------------------------');
+                  
+                  encoder.bold(true);
+                  encoder.twoColumnRow('TOTAL', totalStr);
+                  encoder.bold(false);
+                  
+                  encoder.line('--------------------------------');
+                  encoder.twoColumnRow(`Dibayar (${tx.paid_method || 'CASH'})`, paidStr);
+                  encoder.twoColumnRow('Kembalian', changedStr);
+
+                  encoder.line('================================');
+              }
+              
+              // Footer
+              encoder.alignCenter();
+              encoder.line(noPrice ? 'Sajian Segera Disiapkan' : 'Terima Kasih');
+              if (!noPrice) {
+                  encoder.line('Atas Kunjungan Anda');
+              }
+              
+              encoder.feed(3);
+              encoder.cut();
+
+              return encoder.getRaw();
+          }
+
+          // Helper: Generate structured 58mm HTML receipt inside dynamic iframe
+          function printHtmlReceipt(data, noPrice = false) {
+              const tx = data.transaction;
+              const items = tx.order_item || [];
+              const res = data.restaurant || {};
+              const cashier = data.user || 'Kasir';
+              
+              let itemsHtml = '';
+              items.forEach(elem => {
+                  itemsHtml += `
+                      <div style="margin-bottom: 8px;">
+                          <p style="margin: 0; font-weight: bold; font-size: 13px;">${elem.product_name}</p>
+                          ${elem.note ? `<p style="margin: 2px 0 2px 10px; font-style: italic; font-size: 11px;">* Note: ${elem.note}</p>` : ''}
+                          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 2px;">
+                              ${noPrice ? `
+                              <span style="font-weight: bold; font-size: 13px;">Qty: ${elem.qty}</span>
+                              ` : `
+                              <span>${elem.qty} x Rp ${addCommas(elem.price || (elem.subtotal/elem.qty))}</span>
+                              <span style="font-weight: bold;">Rp ${addCommas(elem.subtotal)}</span>
+                              `}
+                          </div>
+                      </div>
+                  `;
+              });
+
+              const tax = tx.tax || 0;
+              const discount = tx.discount || 0;
+              const total = tx.total;
+              const paid = tx.total_paid || 0;
+              const changed = paid > 0 ? (paid - total) : 0;
+
+              const receiptHtml = `
+                  <html>
+                  <head>
+                      <title>Print Receipt</title>
+                      <style>
+                          @page { margin: 0; }
+                          body {
+                              font-family: 'Courier New', Courier, monospace;
+                              width: 58mm;
+                              margin: 0;
+                              padding: 10px;
+                              box-sizing: border-box;
+                              color: #000;
+                              background: #fff;
+                          }
+                          .text-center { text-align: center; }
+                          .text-right { text-align: right; }
+                          .bold { font-weight: bold; }
+                          .divider { border-top: 1px dashed #000; margin: 8px 0; }
+                          .row { display: flex; justify-content: space-between; font-size: 12px; margin: 3px 0; }
+                          h4 { margin: 0; font-size: 15px; font-weight: bold; }
+                          p { margin: 2px 0; font-size: 11px; }
+                      </style>
+                  </head>
+                  <body>
+                      <div class="text-center" style="margin-bottom: 8px;">
+                          ${!noPrice && res.logo ? `<img src="${res.logo}" alt="logo" style="max-height: 45px; max-width: 90px; object-fit: contain; margin-bottom: 6px; filter: grayscale(100%); display: inline-block;"><br>` : ''}
+                          <h4 style="text-transform: uppercase; font-size: 14px; margin: 4px 0;">${noPrice ? 'KITCHEN CHECK' : (res.name || 'POS KASIR')}</h4>
+                          ${!noPrice && res.location ? `<p style="font-size: 10px; margin: 2px 0 0 0; line-height: 1.2;">${res.location}</p>` : ''}
+                      </div>
+                      <div class="divider"></div>
+                      <div>
+                          <p>Tanggal: ${moment(tx.paid_at || tx.created_at).format('DD/MM/YYYY HH:mm')}</p>
+                          <p>Invoice: #${tx.invoice_number}</p>
+                          <p>Meja   : ${tx.table ? 'Meja ' + tx.table.nomor_meja : 'Take Away'}</p>
+                          <p>Kasir  : ${cashier}</p>
+                      </div>
+                      <div class="divider"></div>
+                      <div>
+                          ${itemsHtml}
+                      </div>
+                      <div class="divider"></div>
+                      ${!noPrice ? `
+                      <div>
+                          <div class="row">
+                              <span>Subtotal</span>
+                              <span>Rp ${addCommas(tx.subtotal || total)}</span>
+                          </div>
+                          <div class="row">
+                              <span>Pajak (10%)</span>
+                              <span>Rp ${addCommas(tax)}</span>
+                          </div>
+                          ${discount > 0 ? `
+                          <div class="row" style="color: red;">
+                              <span>Diskon</span>
+                              <span>-Rp ${addCommas(discount)}</span>
+                          </div>
+                          ` : ''}
+                          <div class="divider"></div>
+                          <div class="row bold" style="font-size: 13px;">
+                              <span>TOTAL</span>
+                              <span>Rp ${addCommas(total)}</span>
+                          </div>
+                          <div class="divider"></div>
+                          <div class="row">
+                              <span>Dibayar (${tx.paid_method || 'CASH'})</span>
+                              <span>Rp ${addCommas(paid)}</span>
+                          </div>
+                          <div class="row">
+                              <span>Kembalian</span>
+                              <span>Rp ${addCommas(changed)}</span>
+                          </div>
+                      </div>
+                      <div class="divider" style="border-top: 1px double #000;"></div>
+                      ` : ''}
+                      <div class="text-center" style="margin-top: 10px; font-size: 12px; font-weight: bold;">
+                          <p>${noPrice ? 'Sajian Segera Disiapkan' : 'Terima Kasih'}</p>
+                          ${!noPrice ? '<p>Atas Kunjungan Anda</p>' : ''}
+                      </div>
+                  </body>
+                  </html>
+              `;
+
+              let iframe = document.getElementById('bt-print-iframe');
+              if (!iframe) {
+                  iframe = document.createElement('iframe');
+                  iframe.id = 'bt-print-iframe';
+                  iframe.style.position = 'absolute';
+                  iframe.style.width = '0px';
+                  iframe.style.height = '0px';
+                  iframe.style.border = 'none';
+                  iframe.style.left = '-9999px';
+                  document.body.appendChild(iframe);
+              }
+
+              const doc = iframe.contentDocument || iframe.contentWindow.document;
+              doc.open();
+              doc.write(receiptHtml);
+              doc.close();
+
+              setTimeout(() => {
+                  iframe.contentWindow.focus();
+                  iframe.contentWindow.print();
+              }, 250);
+          }
     </script>
 @endsection

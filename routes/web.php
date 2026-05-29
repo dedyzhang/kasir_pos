@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Middleware\IsAdmin;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,7 @@ Route::middleware(IsAdmin::class)->controller(SettingsController::class)->group(
     Route::delete('/settings/table/{uuid}/delete','tableDelete')->name('settings.table.delete');
     Route::post('/settings/payment/tax/update','paymentTaxUpdate')->name('settings.payment.tax.update');
     Route::post('/settings/restaurant/update','restaurantUpdate')->name('settings.restaurant.update');
+    Route::post('/settings/attendance/late','attendanceLateUpdate')->name('settings.attendance.late.update');
 });
 Route::middleware('auth')->controller(TransactionsController::class)->group(function(){
     Route::get('/transaction/live-updates','getLiveUpdates')->name('transaction.live-updates');
@@ -73,4 +75,18 @@ Route::middleware('auth')->controller(ActivityController::class)->group(function
 Route::resource('users',UserController::class)->middleware(IsAdmin::class);
 Route::middleware(IsAdmin::class)->controller(UserController::class)->group(function() {
     Route::post('/users/{uuid}/reset','resetPassword')->name('users.reset');
+});
+Route::middleware('auth')->controller(AttendanceController::class)->group(function() {
+    Route::get('/attendance/today', 'checkToday')->name('attendance.today');
+    Route::post('/attendance/clock-in', 'clockIn')->name('attendance.clock-in');
+    Route::post('/attendance/clock-out', 'clockOut')->name('attendance.clock-out');
+});
+
+Route::middleware('auth')->group(function() {
+    Route::post('/change-password', [UserController::class, 'changePassword'])->name('users.change-password');
+});
+
+Route::middleware(IsAdmin::class)->controller(AttendanceController::class)->group(function() {
+    Route::get('/attendance/recap', 'recapIndex')->name('attendance.recap');
+    Route::get('/attendance/export', 'exportExcel')->name('attendance.export');
 });

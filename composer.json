@@ -9,6 +9,7 @@
         "php": "^8.2",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "maatwebsite/excel": "^3.1",
         "mike42/escpos-php": "dev-development#f414320fc510afcacd4cbb75902f827399dee429"
     },
     "require-dev": {

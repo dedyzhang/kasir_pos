@@ -23,20 +23,30 @@ class ActivityController extends Controller
         return view('activity.report');
     }
 
-    public function reportShow(String $date) {
-        $transactions = Transactions::with('table','orderItem')->where('status','paid')->whereDate('paid_at',$date)->get();
+    public function reportShow(Request $request, String $date) {
+        $startDate = $request->query('start_date', $date);
+        $endDate = $request->query('end_date', $date);
+
+        $transactions = Transactions::with(['table', 'orderItem.product.category'])
+            ->where('status', 'paid')
+            ->whereBetween('paid_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            ->orderBy('paid_at', 'desc')
+            ->get();
+
         $reportSummary = array();
-        $reportSummary['date'] = $date;
+        $reportSummary['date'] = $startDate === $endDate ? $startDate : $startDate . ' s/d ' . $endDate;
+        $reportSummary['start_date'] = $startDate;
+        $reportSummary['end_date'] = $endDate;
         $reportSummary['total_transactions'] = $transactions->count();
-        // //Cost Price Count
+
+        // Cost Price Count
         $reportSummary['total_cost_price'] = $transactions->sum(function($transaction) {
             return $transaction->orderItem->sum(function($orderItem) {
-                if($orderItem->product) {
+                if ($orderItem->product) {
                     return $orderItem->qty * $orderItem->product->cost_price;
                 } else {
                     return 0;
                 }
-                // return $orderItem->qty * $orderItem->product->cost_price;
             });
         });
         $reportSummary['operasional_cost'] = (50 / 100) * $reportSummary['total_cost_price'];
@@ -47,11 +57,11 @@ class ActivityController extends Controller
         $reportSummary['laba_kotor'] = $reportSummary['total_revenue'] - $reportSummary['total_cost_price'];
         $reportSummary['laba_bersih'] = $reportSummary['laba_kotor'] - $reportSummary['operasional_cost'];
 
-        //Discount and Tax Count
+        // Discount and Tax Count
         $reportSummary['total_discount'] = $transactions->sum('discount');
         $reportSummary['total_tax'] = $transactions->sum('tax');
 
-        // //Get all order item from transactions
+        // Get all order item from transactions
         $reportSummary['items'] = array();
         foreach($transactions as $transaction) {
             foreach($transaction->orderItem as $orderItem) {
@@ -69,7 +79,7 @@ class ActivityController extends Controller
                 if(isset($reportSummary['items'][$orderItem->product_id])) {
                     $reportSummary['items'][$orderItem->product_id]['qty'] += $orderItem->qty;
                     $reportSummary['items'][$orderItem->product_id]['total'] += $orderItem->qty * $orderItem->price;
-                    $reportSummary['items'][$orderItem->product_id]['cost_price_total'] += $orderItem->qty * $orderItem->product->cost_price;
+                    $reportSummary['items'][$orderItem->product_id]['cost_price_total'] += $orderItem->qty * $cost_price;
                     $reportSummary['items'][$orderItem->product_id]['profit'] += $item['profit'];
                 } else {
                     $reportSummary['items'][$orderItem->product_id] = $item;
@@ -77,7 +87,33 @@ class ActivityController extends Controller
             }
         }
 
-        // //Get all payment method from transactions
+        // Get all category breakdown
+        $reportSummary['categories'] = array();
+        foreach($transactions as $transaction) {
+            foreach($transaction->orderItem as $orderItem) {
+                if ($orderItem->product && $orderItem->product->category) {
+                    $catName = $orderItem->product->category->nama;
+                    $catColor = $orderItem->product->category->color ?? 'blue';
+                } else {
+                    $catName = 'Uncategorized';
+                    $catColor = 'gray';
+                }
+                
+                $itemTotal = $orderItem->qty * $orderItem->price;
+                if(isset($reportSummary['categories'][$catName])) {
+                    $reportSummary['categories'][$catName]['total'] += $itemTotal;
+                    $reportSummary['categories'][$catName]['qty'] += $orderItem->qty;
+                } else {
+                    $reportSummary['categories'][$catName] = array();
+                    $reportSummary['categories'][$catName]['name'] = $catName;
+                    $reportSummary['categories'][$catName]['color'] = $catColor;
+                    $reportSummary['categories'][$catName]['total'] = $itemTotal;
+                    $reportSummary['categories'][$catName]['qty'] = $orderItem->qty;
+                }
+            }
+        }
+
+        // Get all payment method from transactions
         $reportSummary['payment_methods'] = array();
         foreach($transactions as $transaction) {
             $paymentMethod = $transaction->paid_method;
@@ -91,7 +127,7 @@ class ActivityController extends Controller
             }
         }
 
-        // //Get all order type from transactions
+        // Get all order type from transactions
         $reportSummary['order_types'] = array();
         foreach($transactions as $transaction) {
             $orderType = $transaction->order_type;

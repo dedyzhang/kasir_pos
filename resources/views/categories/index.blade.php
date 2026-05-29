@@ -6,7 +6,7 @@
     <div class="navbar-container flex items-center justify-between w-full gap-4 pe-6">
         <h1 class="text-lg md:text-3xl font-bold">CATEGORIES</h1>
         <div class="date-place hidden md:inline-flex px-2 py-2 pe-4 bg-white rounded-full shadow items-center gap-3">
-            <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-100"><i class="fas fa-calendar-days text-lg text-blue-400"></i></div>
+            <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-100"><i class="fas fa-calendar-days text-lg text-brand-light"></i></div>
             <span class="text-gray-600 font-medium">{{ date('D, d M Y') }}</span>
         </div>
     </div>
@@ -21,7 +21,7 @@
             </div>
         @endif
         <div class="button-list flex flex-wrap gap-2 align-items-center w-full mb-5 p-4 bg-white rounded-lg">
-            <a href="{{ route('categories.create') }}" class="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium"><i class="fas fa-folder"></i> Add Category</a>
+            <a href="{{ route('categories.create') }}" class="bg-brand hover:bg-brand-strong transition-all duration-200 shadow-sm cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium"><i class="fas fa-folder"></i> Add Category</a>
         </div>
         <div class="categories-list p-6 bg-white rounded-lg">
             <div class="wrapper-table" class="w-full">

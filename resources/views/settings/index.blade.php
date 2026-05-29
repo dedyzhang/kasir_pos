@@ -419,6 +419,36 @@
                 </form>
             </div>
         </div>
+
+        <div class="p-4 bg-white rounded-lg grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="col-span-1 md:col-span-2 border-b border-gray-200 pb-3">
+                <p class="text-lg font-bold">Setting Absensi Karyawan</p>
+                <p class="text-sm">Batas Toleransi Waktu Absen Masuk Staf</p>
+            </div>
+            @if(session('success_late_time'))
+            <div class="col-span-1 md:col-span-2 flex items-start sm:items-center p-4 mb-4 text-sm text-fg-success-strong rounded-base bg-success-soft" role="alert">
+                <i class="me-2 mt-0.5 sm:mt-0 fas fa-check"></i>
+                <p><span class="font-medium me-1">Sukses!</span> {{session('success_late_time')}}</p>
+            </div>
+            @endif
+            <div class="col-span-1">
+                @php
+                    $settingLate = $settings->first(function($item) {
+                        return $item->jenis == 'attendance_late_time';
+                    });
+                @endphp
+                <form method="POST" action="{{ route('settings.attendance.late.update') }}">
+                    @csrf
+                    <p class="text-base mb-1">Jam Batas Masuk (Format Jam:Menit, e.g. 08:00)</p>
+                    <input type="time" name="late_time" class="w-full px-5 py-3 rounded focus:outline-none focus:border-brand-subtle bg-neutral-primary-soft focus:bg-brand-softer placeholder-gray-500 border border-default" value="{{ old('late_time', $settingLate ? $settingLate->nilai : '08:00') }}" id="attendance_late_time">
+                    @error('late_time')
+                        <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
+
+                    <button type="submit" class="w-full bg-brand-light hover:bg-brand-strong text-white font-medium py-2 px-4 cursor-pointer rounded-base w-full sm:w-auto mt-2"><i class="fas fa-save"></i> Update Jam Batas</button>
+                </form>
+            </div>
+        </div>
         
 
         {{-- Modal Place --}}
