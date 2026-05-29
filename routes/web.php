@@ -76,11 +76,14 @@ Route::resource('users',UserController::class)->middleware(IsAdmin::class);
 Route::middleware(IsAdmin::class)->controller(UserController::class)->group(function() {
     Route::post('/users/{uuid}/reset','resetPassword')->name('users.reset');
 });
-
 Route::middleware('auth')->controller(AttendanceController::class)->group(function() {
     Route::get('/attendance/today', 'checkToday')->name('attendance.today');
     Route::post('/attendance/clock-in', 'clockIn')->name('attendance.clock-in');
     Route::post('/attendance/clock-out', 'clockOut')->name('attendance.clock-out');
+});
+
+Route::middleware('auth')->group(function() {
+    Route::post('/change-password', [UserController::class, 'changePassword'])->name('users.change-password');
 });
 
 Route::middleware(IsAdmin::class)->controller(AttendanceController::class)->group(function() {
