@@ -15,7 +15,7 @@ class LoginController extends Controller
     public function index() {
         $categories = Categories::with('products')->orderBy('sort','asc')->get();
         $products = Products::orderBy('created_at','asc')->get();
-        $transactions = Transactions::with('table')->whereIn('status',['active','process','payment'])->orderBy('created_at','DESC')->get();
+        $transactions = Transactions::with(['table', 'orderItem'])->whereIn('status',['active','process','payment'])->orderBy('created_at','DESC')->get();
         $tables = Tables::orderBy('sort','asc')->get();
         return view('auth.home',compact('categories','products','transactions','tables'));
     }

@@ -117,4 +117,17 @@ class SettingsController extends Controller
 
         return redirect()->back()->with('success_restaurant','Successfully Updated Restaurant Data');
     }
+
+    public function attendanceLateUpdate(Request $request) {
+        $request->validate([
+            'late_time' => 'required'
+        ]);
+
+        Settings::updateOrCreate(
+            ['jenis' => 'attendance_late_time'],
+            ['nilai' => $request->late_time]
+        );
+
+        return redirect()->back()->with('success_late_time', 'Jam Batas Keterlambatan Absensi Berhasil Diperbarui');
+    }
 }

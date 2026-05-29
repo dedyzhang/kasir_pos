@@ -41,13 +41,25 @@ class ProductsController extends Controller
             'stock' => 'required',
         ]);
 
-        $file = $request->file('picture');
-        if($file != null ) {
-            $filename = $file->hashName();
-            $file->storeAs('products', $filename);
+        $filename = "";
+        $croppedData = $request->input('cropped_image_data');
+        if ($croppedData) {
+            $imageParts = explode(";base64,", $croppedData);
+            $imageBase64 = base64_decode($imageParts[1]);
+            $filename = \Illuminate\Support\Str::random(40) . '.png';
+            $path = storage_path('app/public/products/' . $filename);
+            if (!file_exists(dirname($path))) {
+                mkdir(dirname($path), 0777, true);
+            }
+            file_put_contents($path, $imageBase64);
         } else {
-            $filename = "";
+            $file = $request->file('picture');
+            if($file != null ) {
+                $filename = $file->hashName();
+                $file->storeAs('products', $filename);
+            }
         }
+
         Products::create([
             'name' => $request->name,
             'category_id' => $request->categories,
@@ -101,23 +113,43 @@ class ProductsController extends Controller
             'stock' => 'required',
         ]);
         
-        $file = $request->file('picture');
+        $filename = $product->picture;
+        $croppedData = $request->input('cropped_image_data');
 
-        if($file == null && $request->is_deleted == 0) {
-            $filename = $product->picture;
-        } else if($file == null && $request->is_deleted == 1) {
-            $oldPath = storage_path('app/public/products/') . $product->picture;
-            unlink($oldPath);
+        if ($croppedData) {
+            if ($product->picture != "") {
+                $oldPath = storage_path('app/public/products/') . $product->picture;
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+            $imageParts = explode(";base64,", $croppedData);
+            $imageBase64 = base64_decode($imageParts[1]);
+            $filename = \Illuminate\Support\Str::random(40) . '.png';
+            $path = storage_path('app/public/products/' . $filename);
+            if (!file_exists(dirname($path))) {
+                mkdir(dirname($path), 0777, true);
+            }
+            file_put_contents($path, $imageBase64);
+        } else if ($file = $request->file('picture')) {
+            if ($product->picture != "") {
+                $oldPath = storage_path('app/public/products/') . $product->picture;
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+            $filename = $file->hashName();
+            $file->storeAs('products', $filename);
+        } else if ($request->is_deleted == 1) {
+            if ($product->picture != "") {
+                $oldPath = storage_path('app/public/products/') . $product->picture;
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
             $filename = "";
-        } else if($file != null && $request->is_deleted == 1) {
-            $oldPath = storage_path('app/public/products/') . $product->picture;
-            unlink($oldPath);
-            $filename = $file->hashName();
-            $file->storeAs('products', $filename);
-        } else {
-            $filename = $file->hashName();
-            $file->storeAs('products', $filename);
         }
+
         $product->update([
             'name' => $request->name,
             'category_id' => $request->categories,

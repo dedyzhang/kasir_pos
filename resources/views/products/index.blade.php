@@ -20,17 +20,18 @@
             </div>
         @endif
         <div class="button-list flex flex-wrap gap-2 align-items-center w-full mb-5 p-4 bg-white rounded-lg">
-            <a href="{{ route('categories.index') }}" class="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium"><i class="fas fa-folder"></i> Category</a>
-            <a href="{{ route('products.create') }}" class="bg-green-500 hover:bg-green-600 cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium"><i class="fas fa-apple-whole"></i> Add Products</a>
+            <a href="{{ route('categories.index') }}" class="bg-brand hover:bg-brand-strong transition-all duration-200 shadow-sm cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium"><i class="fas fa-folder"></i> Category</a>
+            <a href="{{ route('products.create') }}" class="bg-emerald-500 hover:bg-emerald-600 transition-all duration-200 shadow-sm cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium"><i class="fas fa-apple-whole"></i> Add Products</a>
         </div>
         <div class="categories-list max-w-full overflow-x-auto" id="categories-list">
             <ul class="inline-flex gap-3 mb-5">
-                <li class="group w-40">
+                <li class="group w-40 relative">
                         <input type="radio" id="categories-all-item" name="category_filter" value="all-item" class="hidden peer category_filter" checked>
-                        <label for="categories-all-item" class="inline-flex items-center justify-between w-full p-5 text-body bg-neutral-primary-soft border border-default rounded-base cursor-pointer peer-checked:hover:bg-brand-softer peer-checked:border-brand-subtle peer-checked:bg-brand-softer hover:bg-neutral-secondary-medium peer-checked:text-fg-brand-strong ">                           
+                        <div class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-brand scale-0 peer-checked:scale-100 transition-transform duration-200 z-20 pointer-events-none shadow-sm"></div>
+                        <label for="categories-all-item" class="inline-flex items-center justify-between w-full p-5 text-body bg-neutral-primary-soft border border-default rounded-base cursor-pointer peer-checked:hover:bg-brand-soft/50 peer-checked:border-brand-medium peer-checked:bg-brand-soft hover:bg-neutral-secondary-medium peer-checked:text-fg-brand-strong peer-checked:ring-2 peer-checked:ring-inset peer-checked:ring-brand/70">                           
                             <div class="flex flex-wrap gap-2">
-                                <div class="icon-place w-12 h-12 rounded-full bg-brand-subtle mb-3 flex items-center justify-center">
-                                    <i class="fas fa-apple-whole text-body text-xl"></i>
+                                <div class="icon-place w-12 h-12 rounded-full bg-brand-subtle mb-3 flex items-center justify-center text-brand">
+                                    <i class="fas fa-apple-whole text-xl"></i>
                                 </div>
                                 <div class="text-place w-full">
                                     <p class="text-xl">All Items</p>
@@ -40,12 +41,17 @@
                         </label>
                     </li>
                 @foreach ($categories as $category)
-                    <li class="group w-40">
+                    @php
+                        $splitcolor = explode('-', $category->color);
+                        $colorName = isset($splitcolor[1]) ? $splitcolor[1] : 'brand';
+                    @endphp
+                    <li class="group w-40 relative">
                         <input type="radio" id="categories-{{ $category->uuid }}" name="category_filter" value="{{ $category->uuid }}" class="hidden peer category_filter">
-                        <label for="categories-{{ $category->uuid }}" class="inline-flex items-center justify-between w-full text-body bg-neutral-primary-soft border border-default rounded-base cursor-pointer peer-checked:hover:bg-brand-softer peer-checked:border-brand-subtle peer-checked:bg-brand-softer hover:bg-neutral-secondary-medium peer-checked:text-fg-brand-strong">                           
+                        <div class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-{{ $colorName }}-500 scale-0 peer-checked:scale-100 transition-transform duration-200 z-20 pointer-events-none shadow-sm"></div>
+                        <label for="categories-{{ $category->uuid }}" class="inline-flex items-center justify-between w-full text-body bg-neutral-primary-soft border border-default rounded-base cursor-pointer peer-checked:hover:bg-{{ $colorName }}-100/50 peer-checked:border-{{ $colorName }}-300 peer-checked:bg-{{ $colorName }}-50 hover:bg-neutral-secondary-medium peer-checked:text-{{ $colorName }}-800 peer-checked:ring-2 peer-checked:ring-inset peer-checked:ring-{{ $colorName }}-400/70">                           
                             <div class="flex flex-wrap gap-2 relative p-5">
-                                <div class="icon-place w-12 h-12 rounded-full bg-brand-subtle mb-3 flex items-center justify-center">
-                                    <i class="fas {{ $category->icon }} text-body text-xl"></i>
+                                <div class="icon-place w-12 h-12 rounded-full bg-{{ $colorName }}-100 mb-3 flex items-center justify-center text-{{ $colorName }}-600">
+                                    <i class="fas {{ $category->icon }} text-xl"></i>
                                 </div>
                                 <div class="text-place w-full">
                                     <p class="text-xl">{{$category->nama}}</p>
@@ -89,7 +95,7 @@
         <div id="modal-preview-products" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div class="relative p-4 w-full max-w-2xl max-h-[90%]">
                 <!-- Modal content -->
-                <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                <div class="relative bg-white rounded-lg shadow-sm">
                     <!-- Modal header -->
                     <div class="flex items-center justify-between p-3 md:p-3 rounded-t text-start sm:text-center">
                         <h3 class="text-lg font-semibold text-dark-soft w-full">
@@ -99,7 +105,7 @@
                             <button type="button" class="text-sm w-9 h-9 ms-auto bg-warning-subtle text-warning rounded-full hover:bg-orange-300 cursor-pointer outline-0 inline-flex justify-center items-center edit-product">
                                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M13.0207 5.82839L15.8491 2.99996L20.7988 7.94971L17.9704 10.7781M13.0207 5.82839L3.41405 15.435C3.22652 15.6225 3.12116 15.8769 3.12116 16.1421V20.6776H7.65669C7.92191 20.6776 8.17626 20.5723 8.3638 20.3847L17.9704 10.7781M13.0207 5.82839L17.9704 10.7781" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
                             </button>
-                            <button type="button" class="text-sm w-9 h-9 ms-auto bg-brand-subtle text-brand rounded-full hover:bg-blue-400 cursor-pointer outline-0 inline-flex justify-center items-center delete-product">
+                            <button type="button" class="text-sm w-9 h-9 ms-auto bg-brand-subtle text-brand rounded-full hover:bg-brand-strong hover:text-white cursor-pointer outline-0 inline-flex justify-center items-center delete-product">
                                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M20.5001 6H3.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"></path> <path d="M18.8332 8.5L18.3732 15.3991C18.1962 18.054 18.1077 19.3815 17.2427 20.1907C16.3777 21 15.0473 21 12.3865 21H11.6132C8.95235 21 7.62195 21 6.75694 20.1907C5.89194 19.3815 5.80344 18.054 5.62644 15.3991L5.1665 8.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"></path> <path d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6" stroke="#1C274C" stroke-width="1.5"></path> </g></svg>
                             </button>
                             <button type="button" class="text-sm w-9 h-9 ms-auto bg-danger-subtle text-danger rounded-full hover:bg-red-300 cursor-pointer outline-0 inline-flex justify-center items-center tutup-modal">
@@ -129,7 +135,7 @@
                                 <label class="inline-flex items-center cursor-pointer">
                                     <span class="select-none text-sm font-medium text-heading">Non Active</span>
                                     <input type="checkbox" name="is_active_button" id="is_active_button" value="" class="sr-only peer" checked="">
-                                    <div class="relative mx-3 w-9 h-5 bg-neutral-quaternary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-soft dark:peer-focus:ring-brand-soft rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>
+                                    <div class="relative mx-3 w-9 h-5 bg-neutral-quaternary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-soft rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>
                                     <span class="select-none text-sm font-medium text-heading">Active</span>
                                 </label>    
                             </div>   
@@ -149,7 +155,7 @@
         const options = {
             placement: "center",
             backdrop: "dynamic",
-            backdropClasses: "bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40",
+            backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
             closable: true,
         };
 

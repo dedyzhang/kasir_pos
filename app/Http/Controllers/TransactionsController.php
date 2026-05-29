@@ -29,7 +29,7 @@ class TransactionsController extends Controller
             'status' => 'active'
         ]);
         
-        $transaction = Transactions::findOrFail($newTransaction->uuid);
+        $transaction = Transactions::with('table','orderItem')->findOrFail($newTransaction->uuid);
 
         return response()->json(['success'=> true, 'transaction' => $transaction]);
     }
@@ -64,6 +64,26 @@ class TransactionsController extends Controller
      */
     public function createOrder(String $uuid,Request $request) {
         $transaction = Transactions::findOrFail($uuid);
+        
+        if ($request->is_manual) {
+            // Item manual: tidak perlu produk di database, simpan product_id = null
+            $productName = $request->custom_name ?: 'Item Manual';
+            $price = floatval($request->custom_price ?: 0);
+            $qty = intval($request->qty ?: 1);
+            
+            $orderItem = TransactionDetails::create([
+                'order_id'     => $transaction->uuid,
+                'product_id'   => null,
+                'product_name' => $productName,
+                'price'        => $price,
+                'qty'          => $qty,
+                'note'         => $request->description,
+                'subtotal'     => $price * $qty
+            ]);
+            
+            return response()->json(['success' => true, 'product' => null, 'orderItem' => $orderItem]);
+        }
+        
         $product = Products::findOrFail($request->idProduct);
         
         $orderItem = TransactionDetails::create([
@@ -83,7 +103,8 @@ class TransactionsController extends Controller
      */
     public function decrementOrder(String $uuid) {
         $orderItem = TransactionDetails::findOrFail($uuid);
-        $product = Products::findOrFail($orderItem->product_id);
+        // product_id bisa null untuk item manual
+        $product = $orderItem->product_id ? Products::find($orderItem->product_id) : null;
     
         if($orderItem->qty > 1) {
             $orderItem->qty -= 1;
@@ -101,7 +122,8 @@ class TransactionsController extends Controller
      */
     public function incrementOrder(String $uuid) {
         $orderItem = TransactionDetails::findOrFail($uuid);
-        $product = Products::findOrFail($orderItem->product_id);
+        // product_id bisa null untuk item manual
+        $product = $orderItem->product_id ? Products::find($orderItem->product_id) : null;
 
         $orderItem->qty += 1;
         $orderItem->subtotal = $orderItem->price * $orderItem->qty;
@@ -114,7 +136,8 @@ class TransactionsController extends Controller
      */
     public function changeQtyOrder(String $uuid, Request $request) {
         $orderItem = TransactionDetails::findOrFail($uuid);
-        $product = Products::findOrFail($orderItem->product_id);
+        // product_id bisa null untuk item manual
+        $product = $orderItem->product_id ? Products::find($orderItem->product_id) : null;
         $oldTotal = $orderItem->subtotal;
         $orderItem->qty = $request->qty;
         $orderItem->subtotal = $orderItem->price * $orderItem->qty;
@@ -299,7 +322,39 @@ class TransactionsController extends Controller
      */
     public function printCheckReceipt(String $uuid) {
         $transaction = Transactions::with('orderItem','table')->findOrFail($uuid);
-        return response()->json(['success' => true, 'transaction' => $transaction]);
+        $setting = Settings::whereIn('jenis',['restaurant_settings','restaurant_logo'])->get();
+        $user_login = User::findOrFail($transaction->user_id);
+        $restaurant_setting = $setting->first(function($elem) {
+            return $elem->jenis == 'restaurant_settings';
+        });
+        $restaurant_logo = $setting->first(function($elem) {
+            return $elem->jenis == 'restaurant_logo';
+        });
+        if($restaurant_logo && $restaurant_logo->nilai) {
+            $logoUrl = asset('storage/'.$restaurant_logo->nilai);
+        } else {
+            $logoUrl = "";
+        }
+        
+        if($restaurant_setting && $restaurant_setting->nilai) {
+            $resSetting = unserialize($restaurant_setting->nilai);
+        } else {
+            $resSetting = array();
+        }
+
+        $resName = $resSetting && $resSetting['name'] ? $resSetting['name'] : '';
+        $resLocation = $resSetting && $resSetting['location'] ? $resSetting['location'] : '';
+
+        return response()->json([
+            'success' => true, 
+            'transaction' => $transaction,
+            'restaurant' => [
+                'name' => $resName,
+                'location' => $resLocation,
+                'logo' => $logoUrl
+            ],
+            'user' => $user_login->name
+        ]);
         // $connector = new WindowsPrintConnector("POS-58");
         // $printer = new Printer($connector);
 
@@ -351,7 +406,39 @@ class TransactionsController extends Controller
      */
     public function printCheckReceiptNoPrice(String $uuid) {
         $transaction = Transactions::with('orderItem','table')->findOrFail($uuid);
-        return response()->json(['success' => true, 'transaction' => $transaction]);
+        $setting = Settings::whereIn('jenis',['restaurant_settings','restaurant_logo'])->get();
+        $user_login = User::findOrFail($transaction->user_id);
+        $restaurant_setting = $setting->first(function($elem) {
+            return $elem->jenis == 'restaurant_settings';
+        });
+        $restaurant_logo = $setting->first(function($elem) {
+            return $elem->jenis == 'restaurant_logo';
+        });
+        if($restaurant_logo && $restaurant_logo->nilai) {
+            $logoUrl = asset('storage/'.$restaurant_logo->nilai);
+        } else {
+            $logoUrl = "";
+        }
+        
+        if($restaurant_setting && $restaurant_setting->nilai) {
+            $resSetting = unserialize($restaurant_setting->nilai);
+        } else {
+            $resSetting = array();
+        }
+
+        $resName = $resSetting && $resSetting['name'] ? $resSetting['name'] : '';
+        $resLocation = $resSetting && $resSetting['location'] ? $resSetting['location'] : '';
+
+        return response()->json([
+            'success' => true, 
+            'transaction' => $transaction,
+            'restaurant' => [
+                'name' => $resName,
+                'location' => $resLocation,
+                'logo' => $logoUrl
+            ],
+            'user' => $user_login->name
+        ]);
         // $connector = new WindowsPrintConnector("POS-58");
         // $printer = new Printer($connector);
 
@@ -415,9 +502,9 @@ class TransactionsController extends Controller
             return $elem->jenis == 'restaurant_logo';
         });
         if($restaurant_logo && $restaurant_logo->nilai) {
-            $imgPath = public_path('storage/'.$restaurant_logo->nilai);
+            $logoUrl = asset('storage/'.$restaurant_logo->nilai);
         } else {
-            $imgPath = "";
+            $logoUrl = "";
         }
         
         if($restaurant_setting && $restaurant_setting->nilai) {
@@ -488,7 +575,7 @@ class TransactionsController extends Controller
         // /* Close printer */
         // $printer->close();
 
-        return response()->json(['success' => true, 'message' => 'Check receipt printed successfully','transaction' => $transaction,'restaurant' => ['name' => $resName, 'location' => $resLocation, 'logo' => $imgPath],'user' => $user_login->name]);
+        return response()->json(['success' => true, 'message' => 'Check receipt printed successfully','transaction' => $transaction,'restaurant' => ['name' => $resName, 'location' => $resLocation, 'logo' => $logoUrl],'user' => $user_login->name]);
     }
     // test Print
     // public function testPrint() {

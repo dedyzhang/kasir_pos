@@ -15,20 +15,26 @@
             </div>
         </div>
         <ul class="d-block list-none p-0 m-0 h-auto w-full">
-            <li class="p-3 group hover:bg-blue-100 w-full inline-flex items-center gap-6 cursor-pointer">
-                <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-200 group-hover:bg-blue-500"><i class="fas fa-home text-lg group-hover:text-white"></i></div> <a href="{{ route('auth.index') }}" class="group-hover:text-blue-500 text-lg/loose">Point Of Sales</a></li>
+            <li class="p-3 group hover:bg-brand-soft w-full inline-flex items-center gap-6 cursor-pointer btn-open-attendance">
+                <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-200 group-hover:bg-brand"><i class="fas fa-clock-rotate-left text-lg group-hover:text-white"></i></div>
+                <span class="group-hover:text-fg-brand-strong text-lg/loose font-medium text-gray-700">Absensi Staf</span>
+            </li>
+            <li class="p-3 group hover:bg-brand-soft w-full inline-flex items-center gap-6 cursor-pointer">
+                <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-200 group-hover:bg-brand"><i class="fas fa-home text-lg group-hover:text-white"></i></div> <a href="{{ route('auth.index') }}" class="group-hover:text-fg-brand-strong text-lg/loose">Point Of Sales</a></li>
             @can('admin')
-                <li class="p-3 group hover:bg-blue-100 w-full inline-flex items-center gap-6 cursor-pointer">
-                <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-200 group-hover:bg-blue-500"><i class="fas fa-apple-whole text-lg group-hover:text-white"></i></div> <a href="{{ route('products.index') }}" class="group-hover:text-blue-500 text-lg/loose">Products</a></li>
+                <li class="p-3 group hover:bg-brand-soft w-full inline-flex items-center gap-6 cursor-pointer">
+                <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-200 group-hover:bg-brand"><i class="fas fa-apple-whole text-lg group-hover:text-white"></i></div> <a href="{{ route('products.index') }}" class="group-hover:text-fg-brand-strong text-lg/loose">Products</a></li>
             @endcan
             
-            <li class="p-3 group hover:bg-blue-100 w-full inline-flex items-center gap-6 cursor-pointer">
-                <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-200 group-hover:bg-blue-500"><i class="fas fa-arrow-trend-up text-lg group-hover:text-white"></i></div> <a href="{{ route('activity.index') }}" class="group-hover:text-blue-500 text-lg/loose">Activity</a></li>
+            <li class="p-3 group hover:bg-brand-soft w-full inline-flex items-center gap-6 cursor-pointer">
+                <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-200 group-hover:bg-brand"><i class="fas fa-arrow-trend-up text-lg group-hover:text-white"></i></div> <a href="{{ route('activity.index') }}" class="group-hover:text-fg-brand-strong text-lg/loose">Activity</a></li>
             @can('admin')
-                <li class="p-3 group hover:bg-blue-100 w-full inline-flex items-center gap-6 cursor-pointer">
-                <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-200 group-hover:bg-blue-500"><i class="fas fa-user text-lg group-hover:text-white"></i></div> <a href="{{ route('users.index') }}" class="group-hover:text-blue-500 text-lg/loose">Users</a></li>
-                <li class="p-3 group hover:bg-blue-100 w-full inline-flex items-center gap-6 cursor-pointer">
-                <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-200 group-hover:bg-blue-500"><i class="fas fa-gear text-lg group-hover:text-white"></i></div> <a href="{{ route('settings.index') }}" class="group-hover:text-blue-500 text-lg/loose">Settings</a></li>
+                <li class="p-3 group hover:bg-brand-soft w-full inline-flex items-center gap-6 cursor-pointer">
+                <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-200 group-hover:bg-brand"><i class="fas fa-clipboard-user text-lg group-hover:text-white"></i></div> <a href="{{ route('attendance.recap') }}" class="group-hover:text-fg-brand-strong text-lg/loose">Rekap Absensi</a></li>
+                <li class="p-3 group hover:bg-brand-soft w-full inline-flex items-center gap-6 cursor-pointer">
+                <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-200 group-hover:bg-brand"><i class="fas fa-user text-lg group-hover:text-white"></i></div> <a href="{{ route('users.index') }}" class="group-hover:text-fg-brand-strong text-lg/loose">Users</a></li>
+                <li class="p-3 group hover:bg-brand-soft w-full inline-flex items-center gap-6 cursor-pointer">
+                <div class="menu-icon rounded-full h-12 w-12 flex items-center justify-center bg-gray-200 group-hover:bg-brand"><i class="fas fa-gear text-lg group-hover:text-white"></i></div> <a href="{{ route('settings.index') }}" class="group-hover:text-fg-brand-strong text-lg/loose">Settings</a></li>
             @endcan
             
         </ul>
